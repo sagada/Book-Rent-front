@@ -8,6 +8,7 @@ export const searchKakaoBook = (param) => {
       query: param.query,
       page: param.page,
       size: param.size,
+      target: param.target,
     },
   });
 };

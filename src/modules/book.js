@@ -10,8 +10,11 @@ export const [
   SEARCH_KAKAO_FAILURE,
 ] = ActionTypes("book/SEARCH_KAKAO_BOOK");
 
+export const CHANGE_TARGET = "CHANGE_TARGET";
 export const CHANGE_QUERY = "CHANGE_QUERY";
+
 export const changeQuery = createAction(CHANGE_QUERY, (query) => query);
+export const changeTarget = createAction(CHANGE_TARGET, (target) => target);
 export const searchKakaoBookRequest = createAction(
   SEARCH_KAKAO_REQUEST,
   (param) => param
@@ -49,6 +52,10 @@ const initialState = {
 
 const book = handleActions(
   {
+    [CHANGE_TARGET]: (state, action) => ({
+      ...state,
+      target: action.payload,
+    }),
     [CHANGE_QUERY]: (state, action) => ({
       ...state,
       query: action.payload,
