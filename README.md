@@ -7,5 +7,4 @@
 
 
 ### 프로젝트 환경
-상태관리 :redux-saga
-
+상태관리 :Redux (redux-saga)
