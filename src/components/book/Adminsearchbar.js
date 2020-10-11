@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SEARCH_KAKAO_REQUEST } from "../../modules/book";
+import { SEARCH_KAKAO_REQUEST, CHANGE_QUERY } from "../../modules/book";
 import { Input, Row, Col, Select } from "antd";
 import { AudioOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
@@ -16,18 +16,21 @@ const suffix = (
 );
 const Adminsearchbar = () => {
   const dispatch = useDispatch();
-  const { page, size, target, query } = useSelector((state) => state.book);
-  const [serachParam, setSerachParam] = useState();
+  const { page, size, query, isLoading } = useSelector((state) => state.book);
+
   const dispatchSearchKakaoBook = () => {
-    setSerachParam({
+    const param = {
       page: page,
-      query: query,
       size: size,
-      target: target,
-    });
-    dispatch({ type: SEARCH_KAKAO_REQUEST, payload: serachParam });
+      query: query,
+    };
+    dispatch({ type: SEARCH_KAKAO_REQUEST, payload: param });
   };
 
+  const handleSearch = (e) => {
+    dispatch({ type: CHANGE_QUERY, payload: e.target.value });
+    console.log(e.target.value);
+  };
   return (
     <div>
       <br></br>
@@ -36,7 +39,9 @@ const Adminsearchbar = () => {
         <Col span={8}>
           <Search
             placeholder="input search text"
-            onSearch={(value) => console.log(value)}
+            onSearch={dispatchSearchKakaoBook}
+            onChange={handleSearch}
+            loading={isLoading}
             enterButton
           />
         </Col>
@@ -51,7 +56,6 @@ const Adminsearchbar = () => {
           </Select>
         </Col>
       </Row>
-      <button onClick={dispatchSearchKakaoBook}>버튼</button>
     </div>
   );
 };

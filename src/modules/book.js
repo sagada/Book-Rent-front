@@ -10,6 +10,8 @@ export const [
   SEARCH_KAKAO_FAILURE,
 ] = ActionTypes("book/SEARCH_KAKAO_BOOK");
 
+export const CHANGE_QUERY = "CHANGE_QUERY";
+export const changeQuery = createAction(CHANGE_QUERY, (query) => query);
 export const searchKakaoBookRequest = createAction(
   SEARCH_KAKAO_REQUEST,
   (param) => param
@@ -18,10 +20,11 @@ export const searchKakaoBookRequest = createAction(
 function* getKakaoBook(action) {
   console.log("action", action);
   try {
-    const searchResult = yield call(searchKakaoBook, action.payload);
+    const response = yield call(searchKakaoBook, action.payload);
+    console.log("response :", response);
     yield put({
       type: SEARCH_KAKAO_SUCCESS,
-      payload: searchResult,
+      payload: response,
     });
   } catch (e) {
     yield put({
@@ -36,18 +39,29 @@ export function* bookSaga() {
   yield takeLatest(SEARCH_KAKAO_REQUEST, getKakaoBook);
 }
 const initialState = {
-  searchResult: null,
   page: 1,
-  size: 10,
+  size: 6,
   query: "Java",
   target: "title",
+  isLoading: false,
+  kakaoBookResult: null,
 };
 
 const book = handleActions(
   {
+    [CHANGE_QUERY]: (state, action) => ({
+      ...state,
+      query: action.payload,
+    }),
     [SEARCH_KAKAO_REQUEST]: (state, action) => ({
       ...state,
-      searchResult: action.payload,
+      isLoading: true,
+    }),
+
+    [SEARCH_KAKAO_SUCCESS]: (state, action) => ({
+      ...state,
+      kakaoBookResult: action.payload.data,
+      isLoading: false,
     }),
   },
   initialState
