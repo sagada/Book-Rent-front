@@ -1,32 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Pagination } from "antd";
-import { SEARCH_KAKAO_REQUEST } from "../../modules/book";
-const Paginationbar = ({ pageNumber, cur, total }) => {
+import { SEARCH_KAKAO_REQUEST, changePage } from "../../modules/book";
+const Paginationbar = ({ total }) => {
   const dispatch = useDispatch();
-  const {
-    page,
-    size,
-    target,
-    isLoading,
-    kakaoBookResult,
-    searchParam,
-  } = useSelector((state) => state.book);
+  const { page, size, target, isLoading, kakaoBookResult, query } = useSelector(
+    (state) => state.book
+  );
 
-  const check = (page) => {
+  const check = (pageNum) => {
+    dispatch(changePage(pageNum));
+    const param = {
+      page: pageNum,
+      size: size,
+      target: target,
+      query: query,
+    };
     console.log(page);
-    dispatch({ type: SEARCH_KAKAO_REQUEST, payload: searchParam });
+    dispatch({ type: SEARCH_KAKAO_REQUEST, payload: param });
   };
 
   return (
-    <Pagination
-      disable={total !== 0 ? false : true}
-      current={pageNumber}
-      defaultPageSize={6}
-      onChange={check}
-      pageSize={6}
-      total={total}
-    />
+    <Pagination current={page} onChange={check} pageSize={size} total={total} />
   );
 };
 

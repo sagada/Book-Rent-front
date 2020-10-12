@@ -4,8 +4,9 @@ import {
   SEARCH_KAKAO_REQUEST,
   changeQuery,
   changeTarget,
+  changeSaveBookFlag,
 } from "../../modules/book";
-import { Input, Row, Col, Select } from "antd";
+import { Input, Row, Col, Select, Button } from "antd";
 import { AudioOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 const { Search } = Input;
@@ -20,9 +21,16 @@ const suffix = (
 );
 const Adminsearchbar = () => {
   const dispatch = useDispatch();
-  const { page, size, query, target, isLoading } = useSelector(
-    (state) => state.book
-  );
+  const {
+    page,
+    size,
+    query,
+    target,
+    isLoading,
+    kakaoBookResult,
+    saveBookFlag,
+    saveBookList,
+  } = useSelector((state) => state.book);
 
   const dispatchSearchKakaoBook = () => {
     const param = {
@@ -42,6 +50,10 @@ const Adminsearchbar = () => {
   const handleSelectBox = (e) => {
     dispatch(changeTarget(e));
     console.log(e);
+  };
+
+  const handelSaveBookFlag = () => {
+    dispatch(changeSaveBookFlag(!saveBookFlag));
   };
   return (
     <div>
@@ -73,6 +85,24 @@ const Adminsearchbar = () => {
           </Select>
         </Col>
       </Row>
+      <br></br>
+      {kakaoBookResult != null && kakaoBookResult.documents.length !== 0 && (
+        <Row justify="end">
+          <Col span={4}></Col>
+          <Col span={4}></Col>
+          <Col span={4}></Col>
+          <Col span={4}>
+            <Button
+              onClick={handelSaveBookFlag}
+              ghost={saveBookFlag}
+              style={{ margin: "auto" }}
+              type="primary"
+            >
+              {saveBookFlag ? "선택완료" : "입고하기"}
+            </Button>
+          </Col>
+        </Row>
+      )}
     </div>
   );
 };

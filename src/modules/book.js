@@ -10,9 +10,22 @@ export const [
   SEARCH_KAKAO_FAILURE,
 ] = ActionTypes("book/SEARCH_KAKAO_BOOK");
 
+export const CHANGE_SAVE_BOOK_FLAG = "CHANGE_SAVE_BOOK_FLAG";
+export const CHANGE_FALG_LIST_INDEX = "CHANGE_FALG_LIST_INDEX";
+
 export const CHANGE_TARGET = "CHANGE_TARGET";
 export const CHANGE_QUERY = "CHANGE_QUERY";
+export const CHANGE_PAGE = "CHANGE_PAGE";
 
+export const chagneFlagListIndex = createAction(
+  CHANGE_FALG_LIST_INDEX,
+  (idx) => idx
+);
+export const changeSaveBookFlag = createAction(
+  CHANGE_SAVE_BOOK_FLAG,
+  (flag) => flag
+);
+export const changePage = createAction(CHANGE_PAGE, (page) => page);
 export const changeQuery = createAction(CHANGE_QUERY, (query) => query);
 export const changeTarget = createAction(CHANGE_TARGET, (target) => target);
 export const searchKakaoBookRequest = createAction(
@@ -43,15 +56,34 @@ export function* bookSaga() {
 }
 const initialState = {
   page: 1,
-  size: 6,
+  size: 8,
   query: "Java",
   target: "title",
   isLoading: false,
   kakaoBookResult: null,
+  saveBookFlag: false,
+  saveBookList: [],
 };
 
 const book = handleActions(
   {
+    [CHANGE_FALG_LIST_INDEX]: (state, action) => ({
+      ...state,
+      saveBookList: [
+        ...state.saveBookList.slice(0, action.payload),
+        !state.saveBookList[action.payload],
+        ...state.saveBookList.slice(action.payload + 1),
+      ],
+    }),
+    [CHANGE_SAVE_BOOK_FLAG]: (state, action) => ({
+      ...state,
+      saveBookFlag: action.payload,
+      saveBookList: Array.from({ length: state.size }, (undefined, i) => false),
+    }),
+    [CHANGE_PAGE]: (state, action) => ({
+      ...state,
+      page: action.payload,
+    }),
     [CHANGE_TARGET]: (state, action) => ({
       ...state,
       target: action.payload,
@@ -63,11 +95,14 @@ const book = handleActions(
     [SEARCH_KAKAO_REQUEST]: (state, action) => ({
       ...state,
       isLoading: true,
+      saveBookFlag: false,
+      saveBookList: [],
     }),
 
     [SEARCH_KAKAO_SUCCESS]: (state, action) => ({
       ...state,
       kakaoBookResult: action.payload.data,
+      saveBookList: Array.from({ length: state.size }, (undefined, i) => false),
       isLoading: false,
     }),
   },
