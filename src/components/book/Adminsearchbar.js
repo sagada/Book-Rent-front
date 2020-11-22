@@ -5,9 +5,13 @@ import {
   changeQuery,
   changeTarget,
   changeSaveBookFlag,
+  setSaveBookList,
+  changeModalState,
+  setModalOpen,
 } from "../../modules/book";
-import { Input, Row, Col, Select, Button } from "antd";
-import { AudioOutlined } from "@ant-design/icons";
+import KakaoModal from "./KakaoModal";
+import { Input, Row, Col, Select, Button, Divider } from "antd";
+import { AudioOutlined, ConsoleSqlOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 const { Search } = Input;
 const { Option, OptGroup } = Select;
@@ -19,6 +23,7 @@ const suffix = (
     }}
   />
 );
+
 const Adminsearchbar = () => {
   const dispatch = useDispatch();
   const {
@@ -30,6 +35,8 @@ const Adminsearchbar = () => {
     kakaoBookResult,
     saveBookFlag,
     saveBookList,
+    isBookModalOpen,
+    modalOpen,
   } = useSelector((state) => state.book);
 
   const dispatchSearchKakaoBook = () => {
@@ -51,13 +58,31 @@ const Adminsearchbar = () => {
     dispatch(changeTarget(e));
     console.log(e);
   };
+  const saveBooks = () => {
+    let saveBooksIdx = saveBookList;
+    console.log(saveBooksIdx);
+  };
+  // 추후 모달 업데이트 시에 스펙 업
+  const handleModalOpen = () => {
+    let param = [];
+    for (let i = 0; i < kakaoBookResult.documents.length; i++) {
+      if (saveBookList[i]) {
+        param.push(kakaoBookResult.documents[i]);
+      }
+    }
+    console.log("결과", param);
+    dispatch(setSaveBookList(param));
+    dispatch(changeModalState(!isBookModalOpen));
+  };
 
   const handelSaveBookFlag = () => {
+    dispatch(setModalOpen());
     dispatch(changeSaveBookFlag(!saveBookFlag));
   };
   return (
     <div>
       <br></br>
+      <KakaoModal />
       <Row>
         <Col span={4}></Col>
         <Col span={8}>
@@ -90,7 +115,18 @@ const Adminsearchbar = () => {
         <Row justify="end">
           <Col span={4}></Col>
           <Col span={4}></Col>
-          <Col span={4}></Col>
+          <Col span={4}>
+            {modalOpen ? (
+              <Button
+                ghost={modalOpen}
+                style={{ margin: "auto" }}
+                type="primary"
+                onClick={handleModalOpen}
+              >
+                입고하기
+              </Button>
+            ) : null}
+          </Col>
           <Col span={4}>
             <Button
               onClick={handelSaveBookFlag}
@@ -98,9 +134,12 @@ const Adminsearchbar = () => {
               style={{ margin: "auto" }}
               type="primary"
             >
-              {saveBookFlag ? "선택완료" : "입고하기"}
+              {saveBookFlag ? "취소하기" : "입고하기"}
             </Button>
           </Col>
+          {kakaoBookResult != null && (
+            <Divider orientation="left"> 검색 결과</Divider>
+          )}
         </Row>
       )}
     </div>

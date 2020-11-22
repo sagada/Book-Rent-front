@@ -12,11 +12,16 @@ export const [
 
 export const CHANGE_SAVE_BOOK_FLAG = "CHANGE_SAVE_BOOK_FLAG";
 export const CHANGE_FALG_LIST_INDEX = "CHANGE_FALG_LIST_INDEX";
-
+export const CHANGE_MODAL_STATE = "CHANGE_MODAL_STATE";
 export const CHANGE_TARGET = "CHANGE_TARGET";
 export const CHANGE_QUERY = "CHANGE_QUERY";
 export const CHANGE_PAGE = "CHANGE_PAGE";
-
+export const SET_SAVE_BOOK_LIST = "SAVE_BOOK_LIST";
+export const MODAL_OPEN = "MODAL_OPEN";
+export const setSaveBookList = createAction(
+  SET_SAVE_BOOK_LIST,
+  (param) => param
+);
 export const chagneFlagListIndex = createAction(
   CHANGE_FALG_LIST_INDEX,
   (idx) => idx
@@ -25,9 +30,14 @@ export const changeSaveBookFlag = createAction(
   CHANGE_SAVE_BOOK_FLAG,
   (flag) => flag
 );
+
+export const changeModalState = createAction(CHANGE_MODAL_STATE, (s) => s);
 export const changePage = createAction(CHANGE_PAGE, (page) => page);
 export const changeQuery = createAction(CHANGE_QUERY, (query) => query);
 export const changeTarget = createAction(CHANGE_TARGET, (target) => target);
+
+export const setModalOpen = createAction(MODAL_OPEN);
+
 export const searchKakaoBookRequest = createAction(
   SEARCH_KAKAO_REQUEST,
   (param) => param
@@ -51,6 +61,12 @@ function* getKakaoBook(action) {
   }
 }
 
+function* getKakaoSavedBooks(action) {
+  console("getKakaoSavedBooks", action);
+  try {
+    const response = yield call();
+  } catch (e) {}
+}
 export function* bookSaga() {
   yield takeLatest(SEARCH_KAKAO_REQUEST, getKakaoBook);
 }
@@ -63,10 +79,17 @@ const initialState = {
   kakaoBookResult: null,
   saveBookFlag: false,
   saveBookList: [],
+  isBookModalOpen: false,
+  saveBookListParam: [],
+  modalOpen: false,
 };
 
 const book = handleActions(
   {
+    [CHANGE_MODAL_STATE]: (state, action) => ({
+      ...state,
+      isBookModalOpen: action.payload,
+    }),
     [CHANGE_FALG_LIST_INDEX]: (state, action) => ({
       ...state,
       saveBookList: [
@@ -74,6 +97,10 @@ const book = handleActions(
         !state.saveBookList[action.payload],
         ...state.saveBookList.slice(action.payload + 1),
       ],
+    }),
+    [MODAL_OPEN]: (state, action) => ({
+      ...state,
+      modalOpen: !state.modalOpen,
     }),
     [CHANGE_SAVE_BOOK_FLAG]: (state, action) => ({
       ...state,
@@ -97,6 +124,10 @@ const book = handleActions(
       isLoading: true,
       saveBookFlag: false,
       saveBookList: [],
+      isBookModalOpen: false,
+      saveBookListParam: [],
+      kakaoBookResult: null,
+      modalOpen: false,
     }),
 
     [SEARCH_KAKAO_SUCCESS]: (state, action) => ({
@@ -104,6 +135,11 @@ const book = handleActions(
       kakaoBookResult: action.payload.data,
       saveBookList: Array.from({ length: state.size }, (undefined, i) => false),
       isLoading: false,
+      saveBookFlag: false,
+    }),
+    [SET_SAVE_BOOK_LIST]: (state, action) => ({
+      ...state,
+      saveBookListParam: action.payload,
     }),
   },
   initialState
