@@ -2,7 +2,7 @@ import { createAction, handleActions } from "redux-actions";
 import { call, delay, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { ActionTypes } from "../Utils/ActionTypes";
 
-import { searchKakaoBook } from "../lib/book";
+import { searchKakaoBook, getBookCountByIsbnArr } from "../lib/book";
 
 export const [
   SEARCH_KAKAO_REQUEST,
@@ -18,6 +18,8 @@ export const CHANGE_QUERY = "CHANGE_QUERY";
 export const CHANGE_PAGE = "CHANGE_PAGE";
 export const SET_SAVE_BOOK_LIST = "SAVE_BOOK_LIST";
 export const MODAL_OPEN = "MODAL_OPEN";
+export const CONCAT_BOOK_ISBN = "CONCAT_BOOK_ISBN";
+
 export const setSaveBookList = createAction(
   SET_SAVE_BOOK_LIST,
   (param) => param
@@ -30,6 +32,11 @@ export const changeSaveBookFlag = createAction(
   CHANGE_SAVE_BOOK_FLAG,
   (flag) => flag
 );
+
+export const concatBookIsbn = createAction(
+  CONCAT_BOOK_ISBN,
+  (param) => param
+)
 
 export const changeModalState = createAction(CHANGE_MODAL_STATE, (s) => s);
 export const changePage = createAction(CHANGE_PAGE, (page) => page);
@@ -61,6 +68,22 @@ function* getKakaoBook(action) {
   }
 }
 
+function * getBookCount(action)
+{
+  console.log("action", action);
+
+  try{
+    const response = yield call(getBookCountByIsbnArr, action.payload);
+    console.log('book count by isbn response :' , response)
+    yield put({
+      type : 
+    });
+  }catch(e)
+  {
+    
+  }
+}
+
 function* getKakaoSavedBooks(action) {
   console("getKakaoSavedBooks", action);
   try {
@@ -82,10 +105,15 @@ const initialState = {
   isBookModalOpen: false,
   saveBookListParam: [],
   modalOpen: false,
+  concatIsbnParam : null,
 };
 
 const book = handleActions(
   {
+    [CONCAT_BOOK_ISBN] : (state, action) =>({
+        ...state,
+        concatIsbnParam : action.payload
+    }),
     [CHANGE_MODAL_STATE]: (state, action) => ({
       ...state,
       isBookModalOpen: action.payload,

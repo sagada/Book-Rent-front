@@ -65,12 +65,16 @@ const Adminsearchbar = () => {
   // 추후 모달 업데이트 시에 스펙 업
   const handleModalOpen = () => {
     let param = [];
+    let isbnParam = [];
     for (let i = 0; i < kakaoBookResult.documents.length; i++) {
       if (saveBookList[i]) {
         param.push(kakaoBookResult.documents[i]);
+        let isbnArray = kakaoBookResult.documents[i].isbn.split(' ');
+        isbnParam.push(isbnArray[0])
       }
     }
     console.log("결과", param);
+    console.log("ISBN : ", isbnParam)
     dispatch(setSaveBookList(param));
     dispatch(changeModalState(!isBookModalOpen));
   };

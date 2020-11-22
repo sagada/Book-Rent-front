@@ -12,3 +12,14 @@ export const searchKakaoBook = (param) => {
     },
   });
 };
+
+export const getBookCountByIsbnArr = (isbnArray)=>{
+  console.log("isbn array in axios request before", isbnArray);
+  
+  return axios.get(`${url}/count`, {
+    params : {
+      isbnArray : isbnArray
+    }
+  })
+
+}
