@@ -1,17 +1,34 @@
-import { Modal, Button, Table, Tag, Space } from "antd";
+import { Modal, Button, Table, Tag, Space, Alert } from "antd";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { changeModalState } from "../../modules/book";
+import { changeModalState, SAVE_KAKAO_REQUEST } from "../../modules/book";
 import { columns } from "../../Utils/KakaoSaveBooksdats";
 function KakaoModal() {
   const dispatch = useDispatch();
-  const { isBookModalOpen, saveBookListParam } = useSelector(
+  const { isBookModalOpen, saveBookListParam, saveBookIsSuccess } = useSelector(
     (state) => state.book
   );
   const handleModalState = () => {
     dispatch(changeModalState(!isBookModalOpen));
   };
 
+  const saveKakakoBook = () => {
+    console.log("saveKakakoBook");
+    console.log("!@!#!@#@#!@");
+    let requestParam = [];
+    saveBookListParam.forEach((ele) => {
+      let p = {
+        name: ele.title,
+        publisher: ele.publisher,
+        isbn: ele.isbn,
+        count: 100,
+        imgUrl: ele.thumbnail,
+        author: ele.authors[0],
+      };
+      requestParam.push(p);
+    });
+    dispatch({ type: SAVE_KAKAO_REQUEST, payload: requestParam });
+  };
   const data = [
     {
       key: "1",
@@ -40,9 +57,12 @@ function KakaoModal() {
     <Modal
       title="Basic Modal"
       visible={isBookModalOpen}
-      //   onOk={this.handleOk}
+      onOk={saveKakakoBook}
       onCancel={handleModalState}
     >
+      {saveBookIsSuccess ? (
+        <Alert message="Success Text" type="success" closable />
+      ) : null}
       <Table columns={columns} dataSource={data} />
     </Modal>
   );

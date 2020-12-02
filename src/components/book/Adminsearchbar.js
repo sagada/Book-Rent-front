@@ -8,9 +8,10 @@ import {
   setSaveBookList,
   changeModalState,
   setModalOpen,
+  OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT,
 } from "../../modules/book";
 import KakaoModal from "./KakaoModal";
-import { Input, Row, Col, Select, Button, Divider } from "antd";
+import { Input, Row, Col, Select, Button, Divider, Alert } from "antd";
 import { AudioOutlined, ConsoleSqlOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 const { Search } = Input;
@@ -37,6 +38,7 @@ const Adminsearchbar = () => {
     saveBookList,
     isBookModalOpen,
     modalOpen,
+    saveBookIsSuccess,
   } = useSelector((state) => state.book);
 
   const dispatchSearchKakaoBook = () => {
@@ -69,16 +71,18 @@ const Adminsearchbar = () => {
     for (let i = 0; i < kakaoBookResult.documents.length; i++) {
       if (saveBookList[i]) {
         param.push(kakaoBookResult.documents[i]);
-        let isbnArray = kakaoBookResult.documents[i].isbn.split(' ');
-        isbnParam.push(isbnArray[0])
+        let isbnArray = kakaoBookResult.documents[i].isbn.split(" ");
+        isbnParam.push(isbnArray[0]);
       }
     }
     console.log("결과", param);
-    console.log("ISBN : ", isbnParam)
+    console.log("ISBN : ", isbnParam);
     dispatch(setSaveBookList(param));
     dispatch(changeModalState(!isBookModalOpen));
   };
-
+  const offAlert = () => {
+    dispatch({ type: OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT });
+  };
   const handelSaveBookFlag = () => {
     dispatch(setModalOpen());
     dispatch(changeSaveBookFlag(!saveBookFlag));
@@ -146,6 +150,15 @@ const Adminsearchbar = () => {
           )}
         </Row>
       )}
+
+      {saveBookIsSuccess ? (
+        <Alert
+          message="Success Text"
+          type="success"
+          closable
+          onClose={offAlert}
+        />
+      ) : null}
     </div>
   );
 };
