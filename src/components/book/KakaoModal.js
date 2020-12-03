@@ -13,14 +13,13 @@ function KakaoModal() {
   };
 
   const saveKakakoBook = () => {
-    console.log("saveKakakoBook");
-    console.log("!@!#!@#@#!@");
     let requestParam = [];
     saveBookListParam.forEach((ele) => {
+      let isbns = ele.isbn.split(" ");
       let p = {
         name: ele.title,
         publisher: ele.publisher,
-        isbn: ele.isbn,
+        isbn: isbns[0].trim(),
         count: 100,
         imgUrl: ele.thumbnail,
         author: ele.authors[0],

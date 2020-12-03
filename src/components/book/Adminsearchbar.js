@@ -153,7 +153,7 @@ const Adminsearchbar = () => {
 
       {saveBookIsSuccess ? (
         <Alert
-          message="Success Text"
+          message="입고가 완료 되었습니다."
           type="success"
           closable
           onClose={offAlert}

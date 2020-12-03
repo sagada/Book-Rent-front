@@ -10,9 +10,6 @@ import {
 import KakaoBookSearchRow from "./KakaoBookSearchRow";
 const SearchResults = () => {
   const dispatch = useDispatch();
-  const [leni, setLeni] = useState(0);
-  const { Meta, Grid } = Card;
-  const [len, setLen] = useState(0);
   const [cardLoading, setCardLoading] = useState(false);
   const {
     page,
