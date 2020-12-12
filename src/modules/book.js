@@ -32,7 +32,7 @@ export const [
   GET_QUANTITY_BOOK_SUCCESS,
   GET_QUANTITY_BOOK_FAILURE,
 ] = ActionTypes("book/GET_QUANTITY_BOOK");
-
+export const DELETE_SAVE_BOOK_PARAM_BY_IDX = "DELETE_SAVE_BOOK_PARAM_BY_IDX";
 export const SET_INIT_STATE = "SET_INIT_STATE";
 export const CHANGE_SAVE_BOOK_FLAG = "CHANGE_SAVE_BOOK_FLAG";
 export const CHANGE_FALG_LIST_INDEX = "CHANGE_FALG_LIST_INDEX";
@@ -60,7 +60,10 @@ export const changeSaveBookFlag = createAction(
   CHANGE_SAVE_BOOK_FLAG,
   (flag) => flag
 );
-
+export const deleteSaveBookParamByIdx = createAction(
+  DELETE_SAVE_BOOK_PARAM_BY_IDX,
+  (idx) => idx
+);
 // 상태 초기화
 export const setInitState = createAction(SET_INIT_STATE);
 
@@ -162,6 +165,10 @@ const initialState = {
 
 const book = handleActions(
   {
+    [DELETE_SAVE_BOOK_PARAM_BY_IDX]: (state, action) => ({
+      ...state,
+      saveBookListParam: action.payload,
+    }),
     [SET_INIT_STATE]: (state, action) => ({
       page: 1,
       size: 8,

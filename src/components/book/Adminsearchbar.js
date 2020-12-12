@@ -124,14 +124,11 @@ const Adminsearchbar = () => {
       </Row>
       <br></br>
       {kakaoBookResult != null && kakaoBookResult.documents.length !== 0 && (
-        <Row justify="end">
-          <Col span={4}></Col>
-          <Col span={4}></Col>
-          <Col span={4}>
+        <Row justify="end" gutter={24}>
+          <Col>
             {modalOpen ? (
               <Button
                 ghost={modalOpen}
-                style={{ margin: "auto" }}
                 type="primary"
                 onClick={handleModalOpen}
               >
