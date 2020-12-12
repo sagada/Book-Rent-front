@@ -1,5 +1,12 @@
 import { createAction, handleActions } from "redux-actions";
-import { call, delay, put, takeEvery, takeLatest } from "redux-saga/effects";
+import {
+  call,
+  delay,
+  put,
+  takeEvery,
+  takeLatest,
+  all,
+} from "redux-saga/effects";
 import { ActionTypes } from "../Utils/ActionTypes";
 
 import {
@@ -20,6 +27,13 @@ export const [
   SAVE_KAKAO_FAILURE,
 ] = ActionTypes("book/SAVE_KAKAO_BOOK");
 
+export const [
+  GET_QUANTITY_BOOK_REQUEST,
+  GET_QUANTITY_BOOK_SUCCESS,
+  GET_QUANTITY_BOOK_FAILURE,
+] = ActionTypes("book/GET_QUANTITY_BOOK");
+
+export const SET_INIT_STATE = "SET_INIT_STATE";
 export const CHANGE_SAVE_BOOK_FLAG = "CHANGE_SAVE_BOOK_FLAG";
 export const CHANGE_FALG_LIST_INDEX = "CHANGE_FALG_LIST_INDEX";
 export const CHANGE_MODAL_STATE = "CHANGE_MODAL_STATE";
@@ -32,6 +46,7 @@ export const CONCAT_BOOK_ISBN = "CONCAT_BOOK_ISBN";
 export const OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT =
   "OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT";
 // 카카오 책 저장
+export const UPDATE_MODAL_STATE = "UPDATE_MODAL_STATE";
 
 export const setSaveBookList = createAction(
   SET_SAVE_BOOK_LIST,
@@ -46,13 +61,19 @@ export const changeSaveBookFlag = createAction(
   (flag) => flag
 );
 
+// 상태 초기화
+export const setInitState = createAction(SET_INIT_STATE);
+
 export const concatBookIsbn = createAction(CONCAT_BOOK_ISBN, (param) => param);
 
 export const changeModalState = createAction(CHANGE_MODAL_STATE, (s) => s);
 export const changePage = createAction(CHANGE_PAGE, (page) => page);
 export const changeQuery = createAction(CHANGE_QUERY, (query) => query);
 export const changeTarget = createAction(CHANGE_TARGET, (target) => target);
-
+export const updateModalState = createAction(
+  UPDATE_MODAL_STATE,
+  (param) => param
+);
 export const setModalOpen = createAction(MODAL_OPEN);
 export const offSuccessKakakoSaveAlert = createAction(
   OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT
@@ -81,7 +102,7 @@ function* saveKakaoBookSaga(action) {
   }
 }
 
-function* getKakaoBook(action) {
+function* getKakaoBookSaga(action) {
   console.log("getKakaoBook action", action);
   try {
     const response = yield call(searchKakaoBook, action.payload);
@@ -99,35 +120,33 @@ function* getKakaoBook(action) {
   }
 }
 
-function* getBookCount(action) {
+function* getBookCountSaga(action) {
   console.log("action", action);
-
-  // try{
-  //   const response = yield call(getBookCountByIsbnArr, action.payload);
-  //   console.log('book count by isbn response :' , response)
-  //   yield put({
-  //     type :
-  //   });
-  // }catch(e)
-  // {
-
-  // }
-}
-
-function* getKakaoSavedBooks(action) {
-  console("getKakaoSavedBooks", action);
   try {
-    const response = yield call();
-  } catch (e) {}
+    const response = yield call(getBookCountByIsbnArr, action.payload);
+    console.log("response :", response);
+    yield put({
+      type: GET_QUANTITY_BOOK_SUCCESS,
+      payload: response,
+    });
+  } catch (e) {
+    yield put({
+      type: GET_QUANTITY_BOOK_FAILURE,
+      payload: e,
+      error: true,
+    });
+  }
 }
+
 export function* bookSaga() {
-  yield takeLatest(SEARCH_KAKAO_REQUEST, getKakaoBook);
+  yield takeLatest(SEARCH_KAKAO_REQUEST, getKakaoBookSaga);
   yield takeLatest(SAVE_KAKAO_REQUEST, saveKakaoBookSaga);
+  yield takeLatest(GET_QUANTITY_BOOK_REQUEST, getBookCountSaga);
 }
 const initialState = {
   page: 1,
   size: 8,
-  query: "Java",
+  query: "",
   target: "title",
   isLoading: false,
   kakaoBookResult: null,
@@ -138,10 +157,31 @@ const initialState = {
   modalOpen: false,
   concatIsbnParam: null,
   saveBookIsSuccess: false,
+  modalState: null,
 };
 
 const book = handleActions(
   {
+    [SET_INIT_STATE]: (state, action) => ({
+      page: 1,
+      size: 8,
+      query: "Java",
+      target: "title",
+      isLoading: false,
+      kakaoBookResult: null,
+      saveBookFlag: false,
+      saveBookList: [],
+      isBookModalOpen: false,
+      saveBookListParam: [],
+      modalOpen: false,
+      concatIsbnParam: null,
+      saveBookIsSuccess: false,
+      modalState: null,
+    }),
+    [UPDATE_MODAL_STATE]: (state, action) => ({
+      ...state,
+      modalState: action.payload,
+    }),
     [OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT]: (state, action) => ({
       ...state,
       saveBookIsSuccess: false,
@@ -153,6 +193,20 @@ const book = handleActions(
       ...state,
       isBookModalOpen: false,
       saveBookIsSuccess: true,
+      page: 1,
+      size: 8,
+      query: "Java",
+      target: "title",
+      isLoading: false,
+      kakaoBookResult: null,
+      saveBookFlag: false,
+      saveBookList: [],
+      isBookModalOpen: false,
+      saveBookListParam: [],
+      modalOpen: false,
+      concatIsbnParam: null,
+      saveBookIsSuccess: false,
+      modalState: null,
     }),
     [CONCAT_BOOK_ISBN]: (state, action) => ({
       ...state,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   SEARCH_KAKAO_REQUEST,
@@ -16,6 +16,7 @@ import { AudioOutlined, ConsoleSqlOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 const { Search } = Input;
 const { Option, OptGroup } = Select;
+
 const suffix = (
   <AudioOutlined
     style={{
@@ -39,9 +40,14 @@ const Adminsearchbar = () => {
     isBookModalOpen,
     modalOpen,
     saveBookIsSuccess,
+    saveBookListParam,
   } = useSelector((state) => state.book);
 
-  const dispatchSearchKakaoBook = () => {
+  const dispatchSearchKakaoBook = (e) => {
+    if (query == "") {
+      alert("내용을 입력 해주세요.");
+      return;
+    }
     const param = {
       page: page,
       size: size,
@@ -53,40 +59,38 @@ const Adminsearchbar = () => {
 
   const handleSearch = (e) => {
     dispatch(changeQuery(e.target.value));
-    console.log(e.target.value);
   };
 
   const handleSelectBox = (e) => {
     dispatch(changeTarget(e));
-    console.log(e);
   };
-  const saveBooks = () => {
-    let saveBooksIdx = saveBookList;
-    console.log(saveBooksIdx);
-  };
-  // 추후 모달 업데이트 시에 스펙 업
+
   const handleModalOpen = () => {
+    console.log("handleModalOpen");
     let param = [];
-    let isbnParam = [];
-    for (let i = 0; i < kakaoBookResult.documents.length; i++) {
+
+    for (let i = 0; i < saveBookList.length; i++) {
       if (saveBookList[i]) {
-        param.push(kakaoBookResult.documents[i]);
-        let isbnArray = kakaoBookResult.documents[i].isbn.split(" ");
-        isbnParam.push(isbnArray[0]);
+        let bd = {
+          kakaoBook: kakaoBookResult.documents[i],
+          key: i,
+        };
+        param.push(bd);
       }
     }
-    console.log("결과", param);
-    console.log("ISBN : ", isbnParam);
     dispatch(setSaveBookList(param));
     dispatch(changeModalState(!isBookModalOpen));
   };
+
   const offAlert = () => {
     dispatch({ type: OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT });
   };
+
   const handelSaveBookFlag = () => {
     dispatch(setModalOpen());
     dispatch(changeSaveBookFlag(!saveBookFlag));
   };
+
   return (
     <div>
       <br></br>
@@ -95,7 +99,7 @@ const Adminsearchbar = () => {
         <Col span={4}></Col>
         <Col span={8}>
           <Search
-            placeholder="input search text"
+            placeholder="카카오 책 검색을 하여 책 검색"
             onSearch={dispatchSearchKakaoBook}
             onChange={handleSearch}
             loading={isLoading}
@@ -146,7 +150,10 @@ const Adminsearchbar = () => {
             </Button>
           </Col>
           {kakaoBookResult != null && (
-            <Divider orientation="left"> 검색 결과</Divider>
+            <Divider
+              orientation="left"
+              style={{ marginBottom: "80px", marginTop: "80px" }}
+            />
           )}
         </Row>
       )}

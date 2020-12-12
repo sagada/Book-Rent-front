@@ -1,37 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  SEARCH_KAKAO_REQUEST,
-  changeQuery,
-  changeTarget,
-  changeSaveBookFlag,
-} from "../../modules/book";
 import { chagneFlagListIndex } from "../../modules/book";
-import { Card, Input, Row, Col, Select, Button } from "antd";
+import { Card, Row, Col } from "antd";
 import "antd/dist/antd.css";
 
 function KakaoBookSearchRow({ rowIndex, colSize }) {
   const dispatch = useDispatch();
-  const { Meta, Grid } = Card;
-  const [len, setLen] = useState(0);
-  const [cardLoading, setCardLoading] = useState(false);
+  const { Meta } = Card;
   const {
-    page,
-    size,
-    target,
     kakaoBookResult,
     saveBookFlag,
     saveBookList,
+    modalOpen,
   } = useSelector((state) => state.book);
 
   const handleFlag = (e) => {
-    console.log("index ", e, " 가 클릭되었습니다.");
+    if (!modalOpen) {
+      return;
+    }
     dispatch(chagneFlagListIndex(e));
   };
 
-  const handleLoading = () => {
-    setCardLoading(!cardLoading);
-  };
   return (
     <Row justify="center" align="center" gutter={16}>
       {kakaoBookResult != null &&

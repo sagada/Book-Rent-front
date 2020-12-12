@@ -13,22 +13,21 @@ const searchKakaoBook = (param) => {
   });
 };
 
-const getBookCountByIsbnArr = (isbnArray) => {
-  console.log("isbn array in axios request before", isbnArray);
+const getBookCountByIsbnArr = (isbns) => {
+  console.log("isbn array in axios request before", isbns);
 
   return axios.get(`${url}/count`, {
     params: {
-      isbnArray: isbnArray,
+      isbns: isbns,
     },
   });
 };
 
 const saveKakaoBook = (param) => {
-  console.log("!@!#!@#@#!@");
   console.log("saveKakaoBook api call");
 
   console.log("param : ", param);
   return axios.post(`${url}/api/book/kakao`, param);
 };
 
-export { searchKakaoBook, saveKakaoBook };
+export { searchKakaoBook, saveKakaoBook, getBookCountByIsbnArr };

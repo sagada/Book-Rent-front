@@ -5,6 +5,7 @@ import { changeModalState, SAVE_KAKAO_REQUEST } from "../../modules/book";
 import { columns } from "../../Utils/KakaoSaveBooksdats";
 function KakaoModal() {
   const dispatch = useDispatch();
+  const [innerModalContents, setInnerModalContents] = useState();
   const { isBookModalOpen, saveBookListParam, saveBookIsSuccess } = useSelector(
     (state) => state.book
   );
@@ -12,57 +13,54 @@ function KakaoModal() {
     dispatch(changeModalState(!isBookModalOpen));
   };
 
-  const saveKakakoBook = () => {
+  const requestKakaoBook = () => {
     let requestParam = [];
+
     saveBookListParam.forEach((ele) => {
-      let isbns = ele.isbn.split(" ");
+      let isbns = ele.kakaoBook.isbn.trim().split(" ");
+
       let p = {
-        name: ele.title,
-        publisher: ele.publisher,
+        name: ele.kakaoBook.title,
+        publisher: ele.kakaoBook.publisher,
         isbn: isbns[0].trim(),
         count: 100,
-        imgUrl: ele.thumbnail,
-        author: ele.authors[0],
+        imgUrl: ele.kakaoBook.thumbnail,
+        author: ele.kakaoBook.authors[0],
       };
       requestParam.push(p);
     });
+
     dispatch({ type: SAVE_KAKAO_REQUEST, payload: requestParam });
   };
-  const data = [
-    {
-      key: "1",
-      name: "John Brown",
-      age: 32,
-      address: "New York No. 1 Lake Park",
-      tags: ["nice", "developer"],
-    },
-    {
-      key: "2",
-      name: "Jim Green",
-      age: 42,
-      address: "London No. 1 Lake Park",
-      tags: ["loser"],
-    },
-    {
-      key: "3",
-      name: "Joe Black",
-      age: 32,
-      address: "Sidney No. 1 Lake Park",
-      tags: ["cool", "teacher"],
-    },
-  ];
+
+  useEffect(() => {
+    let modalState = [];
+
+    for (let i = 0; i < saveBookListParam.length; i++) {
+      let p = {
+        key: i,
+        name: saveBookListParam[i].kakaoBook.title,
+        publisher: saveBookListParam[i].kakaoBook.publisher,
+        price: saveBookListParam[i].kakaoBook.price,
+        thumbnail: saveBookListParam[i].kakaoBook.thumbnail,
+      };
+      modalState.push(p);
+    }
+    setInnerModalContents(modalState);
+  }, [isBookModalOpen]);
 
   return (
     <Modal
-      title="Basic Modal"
+      width={1500}
+      title="입고하기"
       visible={isBookModalOpen}
-      onOk={saveKakakoBook}
+      onOk={requestKakaoBook}
       onCancel={handleModalState}
     >
       {saveBookIsSuccess ? (
         <Alert message="Success Text" type="success" closable />
       ) : null}
-      <Table columns={columns} dataSource={data} />
+      <Table columns={columns} dataSource={innerModalContents} />
     </Modal>
   );
 }

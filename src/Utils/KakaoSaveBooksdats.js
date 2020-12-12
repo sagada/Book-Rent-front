@@ -1,39 +1,37 @@
-import { Tag, Space, InputNumber } from "antd";
+import { Tag, Space, InputNumber, Image } from "antd";
 import React from "react";
 
 export const columns = [
   {
-    title: "책 이미지",
-    dataIndex: "name",
-    key: "name",
-    render: (text) => <a>{text}</a>,
+    title: "이미지",
+    key: "thumbnail",
+    dataIndex: "thumbnail",
+    render: (thumbnail) => (
+      <>
+        <Image width={90} src={thumbnail} />
+      </>
+    ),
   },
   {
     title: "책 이름",
-    dataIndex: "age",
-    key: "age",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "출판사",
+    dataIndex: "publisher",
+    key: "publisher",
   },
   {
     title: "가격",
-    dataIndex: "address",
-    key: "address",
+    dataIndex: "price",
+    key: "price",
   },
   {
-    title: "현재 보유 재고수",
-    key: "tags",
-    dataIndex: "tags",
-  },
-  {
-    title: "수량",
+    title: "입고수량",
     key: "action",
     render: (text, record) => (
-      <InputNumber
-        size="large"
-        min={1}
-        max={100}
-        defaultValue={1}
-        // onChange={onChange}
-      />
+      <InputNumber size="large" min={1} max={80} defaultValue={1} />
     ),
   },
 ];
