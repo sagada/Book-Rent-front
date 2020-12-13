@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   SEARCH_KAKAO_REQUEST,
@@ -11,7 +11,7 @@ import {
   OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT,
 } from "../../modules/book";
 import KakaoModal from "./KakaoModal";
-import { Input, Row, Col, Select, Button, Divider, Alert } from "antd";
+import { Input, Row, Col, Select, Button, Divider, Alert, Result } from "antd";
 import { AudioOutlined, ConsoleSqlOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 const { Search } = Input;
@@ -102,6 +102,7 @@ const Adminsearchbar = () => {
             placeholder="카카오 책 검색을 하여 책 검색"
             onSearch={dispatchSearchKakaoBook}
             onChange={handleSearch}
+            value={query}
             loading={isLoading}
             enterButton
           />
@@ -123,6 +124,19 @@ const Adminsearchbar = () => {
         </Col>
       </Row>
       <br></br>
+      {saveBookIsSuccess && (
+        <Result
+          status="success"
+          title="성공적으로 입고가 완료 되었습니다!"
+          subTitle=""
+          extra={[
+            <Button type="primary" key="console">
+              홈으로
+            </Button>,
+            // <Button key="buy">Buy Again</Button>,
+          ]}
+        />
+      )}
       {kakaoBookResult != null && kakaoBookResult.documents.length !== 0 && (
         <Row justify="end" gutter={24}>
           <Col>
@@ -154,15 +168,6 @@ const Adminsearchbar = () => {
           )}
         </Row>
       )}
-
-      {saveBookIsSuccess ? (
-        <Alert
-          message="입고가 완료 되었습니다."
-          type="success"
-          closable
-          onClose={offAlert}
-        />
-      ) : null}
     </div>
   );
 };

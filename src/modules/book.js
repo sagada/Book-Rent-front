@@ -1,12 +1,5 @@
 import { createAction, handleActions } from "redux-actions";
-import {
-  call,
-  delay,
-  put,
-  takeEvery,
-  takeLatest,
-  all,
-} from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 import { ActionTypes } from "../Utils/ActionTypes";
 
 import {
@@ -172,7 +165,7 @@ const book = handleActions(
     [SET_INIT_STATE]: (state, action) => ({
       page: 1,
       size: 8,
-      query: "Java",
+      query: "",
       target: "title",
       isLoading: false,
       kakaoBookResult: null,
@@ -202,17 +195,15 @@ const book = handleActions(
       saveBookIsSuccess: true,
       page: 1,
       size: 8,
-      query: "Java",
+      query: "",
       target: "title",
       isLoading: false,
       kakaoBookResult: null,
       saveBookFlag: false,
       saveBookList: [],
-      isBookModalOpen: false,
       saveBookListParam: [],
       modalOpen: false,
       concatIsbnParam: null,
-      saveBookIsSuccess: false,
       modalState: null,
     }),
     [CONCAT_BOOK_ISBN]: (state, action) => ({
@@ -238,7 +229,7 @@ const book = handleActions(
     [CHANGE_SAVE_BOOK_FLAG]: (state, action) => ({
       ...state,
       saveBookFlag: action.payload,
-      saveBookList: Array.from({ length: state.size }, (undefined, i) => false),
+      saveBookList: Array.from({ length: state.size }, (i) => false),
     }),
     [CHANGE_PAGE]: (state, action) => ({
       ...state,

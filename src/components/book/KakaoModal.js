@@ -1,4 +1,4 @@
-import { Modal, Button, Table, Tag, Space, Alert } from "antd";
+import { Modal, Table, Tag, Alert } from "antd";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -23,12 +23,12 @@ function KakaoModal() {
     let newModalList = [];
 
     for (let i = 0; i < innerModalContents.length; i++) {
-      if (idx.key != innerModalContents[i].key) {
+      if (idx.key !== innerModalContents[i].key) {
         newModalList.push(innerModalContents[i]);
       }
     }
     for (let i = 0; i < saveBookListParam.length; i++) {
-      if (idx.key != saveBookListParam[i].key) {
+      if (idx.key !== saveBookListParam[i].key) {
         newParamList.push(saveBookListParam[i]);
       }
     }
@@ -120,7 +120,7 @@ function KakaoModal() {
       modalState.push(p);
     }
     setInnerModalContents(modalState);
-  }, [isBookModalOpen]);
+  }, [isBookModalOpen, saveBookListParam]);
 
   return (
     <Modal
