@@ -66,24 +66,32 @@ const Adminsearchbar = () => {
   };
 
   const handleModalOpen = () => {
-    console.log("handleModalOpen");
     let param = [];
+    let count = 0;
 
     for (let i = 0; i < saveBookList.length; i++) {
       if (saveBookList[i]) {
-        let bd = {
-          kakaoBook: kakaoBookResult.documents[i],
+        // isbn은 하나만 있다고 가정한다.
+        let isbnArr = kakaoBookResult.documents[i].isbn.split(" ");
+        let firstIsbn = parseInt(isbnArr[0].trim());
+
+        let selectBook = {
           key: i,
+          name: kakaoBookResult.documents[i].title,
+          publisher: kakaoBookResult.documents[i].publisher,
+          price: kakaoBookResult.documents[i].price,
+          imgUrl: kakaoBookResult.documents[i].thumbnail,
+          isbn: firstIsbn,
+          author: kakaoBookResult.documents[i].authors[0],
+          quantity: 1,
+          index: count++,
+          cancel: i,
         };
-        param.push(bd);
+        param.push(selectBook);
       }
     }
     dispatch(setSaveBookList(param));
     dispatch(changeModalState(!isBookModalOpen));
-  };
-
-  const offAlert = () => {
-    dispatch({ type: OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT });
   };
 
   const handelSaveBookFlag = () => {
@@ -133,7 +141,6 @@ const Adminsearchbar = () => {
             <Button type="primary" key="console">
               홈으로
             </Button>,
-            // <Button key="buy">Buy Again</Button>,
           ]}
         />
       )}

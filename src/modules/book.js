@@ -31,6 +31,7 @@ export const CHANGE_SAVE_BOOK_FLAG = "CHANGE_SAVE_BOOK_FLAG";
 export const CHANGE_FALG_LIST_INDEX = "CHANGE_FALG_LIST_INDEX";
 export const CHANGE_MODAL_STATE = "CHANGE_MODAL_STATE";
 export const CHANGE_TARGET = "CHANGE_TARGET";
+export const CHANGE_QUANTITY_BY_INDEX = "CHANGE_QUANTITY_BY_INDEX";
 export const CHANGE_QUERY = "CHANGE_QUERY";
 export const CHANGE_PAGE = "CHANGE_PAGE";
 export const SET_SAVE_BOOK_LIST = "SAVE_BOOK_LIST";
@@ -178,6 +179,10 @@ const book = handleActions(
       saveBookIsSuccess: false,
       modalState: null,
     }),
+
+    [CHANGE_QUANTITY_BY_INDEX]: (state, action) => ({
+      ...state,
+    }),
     [UPDATE_MODAL_STATE]: (state, action) => ({
       ...state,
       modalState: action.payload,
@@ -188,6 +193,7 @@ const book = handleActions(
     }),
     [SAVE_KAKAO_REQUEST]: (state, action) => ({
       ...state,
+      saveBookIsSuccess: false,
     }),
     [SAVE_KAKAO_SUCCESS]: (state, action) => ({
       ...state,
@@ -252,6 +258,7 @@ const book = handleActions(
       saveBookListParam: [],
       kakaoBookResult: null,
       modalOpen: false,
+      saveBookIsSuccess: false,
     }),
 
     [SEARCH_KAKAO_SUCCESS]: (state, action) => ({

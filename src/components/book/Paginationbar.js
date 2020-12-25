@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Pagination } from "antd";
 import { SEARCH_KAKAO_REQUEST, changePage } from "../../modules/book";
+
 const Paginationbar = ({ total }) => {
   const dispatch = useDispatch();
   const { page, size, target, isLoading, kakaoBookResult, query } = useSelector(
@@ -16,7 +17,7 @@ const Paginationbar = ({ total }) => {
       target: target,
       query: query,
     };
-    console.log(page);
+
     dispatch({ type: SEARCH_KAKAO_REQUEST, payload: param });
   };
 

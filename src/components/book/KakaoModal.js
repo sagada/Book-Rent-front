@@ -5,11 +5,11 @@ import {
   changeModalState,
   SAVE_KAKAO_REQUEST,
   deleteSaveBookParamByIdx,
+  setSaveBookList,
 } from "../../modules/book";
 import { InputNumber, Image } from "antd";
 function KakaoModal() {
   const dispatch = useDispatch();
-  const [innerModalContents, setInnerModalContents] = useState();
   const { isBookModalOpen, saveBookListParam, saveBookIsSuccess } = useSelector(
     (state) => state.book
   );
@@ -18,31 +18,38 @@ function KakaoModal() {
   };
 
   const handleDeleteSaveBookItemk = (idx) => {
-    console.log(idx.key);
-    let newParamList = [];
     let newModalList = [];
-
-    for (let i = 0; i < innerModalContents.length; i++) {
-      if (idx.key !== innerModalContents[i].key) {
-        newModalList.push(innerModalContents[i]);
-      }
-    }
+    console.log(idx);
     for (let i = 0; i < saveBookListParam.length; i++) {
       if (idx.key !== saveBookListParam[i].key) {
-        newParamList.push(saveBookListParam[i]);
+        console.log("!");
+        newModalList.push(saveBookListParam[i]);
       }
     }
-    setInnerModalContents(newModalList);
-    dispatch(deleteSaveBookParamByIdx(newParamList));
+
+    dispatch(setSaveBookList(newModalList));
+  };
+
+  const handleChangeInputQuantity = (idx) => {
+    console.log(idx.key);
+    let curInput = document.getElementById(`inp${idx.key}`);
+    let copy = saveBookListParam;
+    for (let i = 0; i < copy.length; i++) {
+      if (copy[i].key == idx.key) {
+        copy[i].quantity = parseInt(curInput.value) + 1;
+      }
+    }
+
+    setSaveBookList(copy);
   };
   const columns = [
     {
       title: "이미지",
-      key: "thumbnail",
-      dataIndex: "thumbnail",
-      render: (thumbnail) => (
+      key: "imgUrl",
+      dataIndex: "imgUrl",
+      render: (imgUrl) => (
         <>
-          <Image width={90} src={thumbnail} />
+          <Image width={90} src={imgUrl} />
         </>
       ),
     },
@@ -65,13 +72,14 @@ function KakaoModal() {
     {
       title: "입고수량",
       key: "action",
-      render: (text, record) => (
+      render: (idx) => (
         <InputNumber
+          id={`inp${idx.key}`}
           size="large"
           min={1}
-          max={80}
+          max={20}
           defaultValue={1}
-          // onChange={onChange}
+          onChange={() => handleChangeInputQuantity(idx)}
         />
       ),
     },
@@ -85,49 +93,23 @@ function KakaoModal() {
       ),
     },
   ];
-  const requestKakaoBook = () => {
-    let requestParam = [];
 
-    saveBookListParam.forEach((ele) => {
-      let isbns = ele.kakaoBook.isbn.trim().split(" ");
+  const saveBooks = () => {
+    let param = {
+      setBookParamList: saveBookListParam,
+    };
 
-      let p = {
-        name: ele.kakaoBook.title,
-        publisher: ele.kakaoBook.publisher,
-        isbn: isbns[0].trim(),
-        count: 100,
-        imgUrl: ele.kakaoBook.thumbnail,
-        author: ele.kakaoBook.authors[0],
-      };
-      requestParam.push(p);
-    });
-
-    dispatch({ type: SAVE_KAKAO_REQUEST, payload: requestParam });
+    dispatch({ type: SAVE_KAKAO_REQUEST, payload: param });
   };
 
-  useEffect(() => {
-    let modalState = [];
-
-    for (let i = 0; i < saveBookListParam.length; i++) {
-      let p = {
-        key: saveBookListParam[i].key,
-        name: saveBookListParam[i].kakaoBook.title,
-        publisher: saveBookListParam[i].kakaoBook.publisher,
-        price: saveBookListParam[i].kakaoBook.price,
-        thumbnail: saveBookListParam[i].kakaoBook.thumbnail,
-        cancel: i,
-      };
-      modalState.push(p);
-    }
-    setInnerModalContents(modalState);
-  }, [isBookModalOpen, saveBookListParam]);
+  useEffect(() => {}, [isBookModalOpen, saveBookListParam]);
 
   return (
     <Modal
       width={1500}
       title="입고 리스트"
       visible={isBookModalOpen}
-      onOk={requestKakaoBook}
+      onOk={saveBooks}
       onCancel={handleModalState}
       okText={"입고"}
       cancelText={"취소"}
@@ -138,7 +120,7 @@ function KakaoModal() {
       <Table
         size="small"
         columns={columns}
-        dataSource={innerModalContents}
+        dataSource={saveBookListParam}
         pagination={false}
       />
     </Modal>
