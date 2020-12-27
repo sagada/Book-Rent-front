@@ -82,19 +82,30 @@ export const searchKakaoBookRequest = createAction(
 
 function* saveKakaoBookSaga(action) {
   console.log("saveKakaoBook action", action);
-  try {
-    console.log("saveKakaoBook api call");
-    const response = yield call(saveKakaoBook, action.payload);
-    console.log("response :", response);
+  const { response, err } = yield call(saveKakaoBook, action.payload);
+
+  // try {
+  //   const response = yield call(saveKakaoBook, action.payload);
+  //   yield put({
+  //     type: SAVE_KAKAO_SUCCESS,
+  //     payload: response,
+  //   });
+  // } catch (e) {
+  //   yield put({
+  //     type: SAVE_KAKAO_FAILURE,
+  //     error: e,
+  //   });
+  // }
+  if (response.status == 200) {
     yield put({
       type: SAVE_KAKAO_SUCCESS,
       payload: response,
     });
-  } catch (e) {
+  } else {
+    alert(response.data.message);
     yield put({
       type: SAVE_KAKAO_FAILURE,
-      payload: e,
-      error: true,
+      error: response,
     });
   }
 }
@@ -155,6 +166,7 @@ const initialState = {
   concatIsbnParam: null,
   saveBookIsSuccess: false,
   modalState: null,
+  errorParam: null,
 };
 
 const book = handleActions(
@@ -211,6 +223,12 @@ const book = handleActions(
       modalOpen: false,
       concatIsbnParam: null,
       modalState: null,
+    }),
+    [SAVE_KAKAO_FAILURE]: (state, action) => ({
+      ...state,
+      saveBookListParam: [],
+      isBookModalOpen: false,
+      errorParam: action.error,
     }),
     [CONCAT_BOOK_ISBN]: (state, action) => ({
       ...state,

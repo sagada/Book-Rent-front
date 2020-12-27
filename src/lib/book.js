@@ -25,9 +25,10 @@ const getBookCountByIsbnArr = (isbns) => {
 
 const saveKakaoBook = (param) => {
   console.log("saveKakaoBook api call");
-
-  console.log("param : ", param);
-  return axios.post(`${url}/api/book/kakao`, param);
+  return axios
+    .post(`${url}/api/book/kakao`, param)
+    .then((response) => response)
+    .catch((err) => err);
 };
 
 export { searchKakaoBook, saveKakaoBook, getBookCountByIsbnArr };
