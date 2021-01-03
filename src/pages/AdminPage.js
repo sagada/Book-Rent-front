@@ -1,7 +1,8 @@
-import React from 'react';
+import React from "react";
 
+import SavedBook from "../components/savedBook/SavedBook";
 const AdminPage = () => {
-    return <div>Admin Page</div>
-}
+  return <SavedBook />;
+};
 
 export default AdminPage;

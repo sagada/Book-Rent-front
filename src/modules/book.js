@@ -149,7 +149,6 @@ const initialState = {
   isBookModalOpen: false,
   saveBookListParam: [],
   modalOpen: false,
-  concatIsbnParam: null,
   saveBookIsSuccess: false,
   modalState: null,
   errorParam: null,
@@ -173,7 +172,6 @@ const book = handleActions(
       isBookModalOpen: false,
       saveBookListParam: [],
       modalOpen: false,
-      concatIsbnParam: null,
       saveBookIsSuccess: false,
       modalState: null,
     }),
@@ -212,8 +210,7 @@ const book = handleActions(
     }),
     [SAVE_KAKAO_FAILURE]: (state, action) => ({
       ...state,
-      saveBookListParam: [],
-      isBookModalOpen: false,
+
       errorParam: action.payload,
     }),
     [CONCAT_BOOK_ISBN]: (state, action) => ({
