@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SEARCH_SAVED_BOOK_REQUEST } from "../../modules/savebook";
 
 function SavedBook() {
+  const { isLoading } = useSelector((state) => state.savebook);
   const dispatch = useDispatch();
   const { Search } = Input;
   const { RangePicker } = DatePicker;
@@ -69,6 +70,7 @@ function SavedBook() {
             placeholder="입고 한 책을 검색"
             onChange={handleBookSearchParam}
             onSearch={handleSearchSaveBook}
+            loading={isLoading}
           />
         </Col>
         <Col span={1}></Col>

@@ -11,6 +11,7 @@ export const [
 
 const initialState = {
   saveBookResult: null,
+  isLoading: false,
 };
 
 function* searchSavedBook(action) {
@@ -37,9 +38,14 @@ export function* saveBookSaga() {
 
 const savebook = handleActions(
   {
+    [SEARCH_SAVED_BOOK_REQUEST]: (state, action) => ({
+      ...state,
+      isLoading: true,
+    }),
     [SEARCH_SAVED_BOOK_SUCCESS]: (state, action) => ({
       ...state,
-      saveBookResult: action.payload,
+      saveBookResult: action.payload.data.content,
+      isLoading: false,
     }),
   },
   initialState
