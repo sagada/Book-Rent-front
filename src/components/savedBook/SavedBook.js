@@ -10,6 +10,7 @@ import {
   Col,
   Tag,
   Radio,
+  Pagination,
 } from "antd";
 import SavedBookResult from "./SavedBookResult";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { SEARCH_SAVED_BOOK_REQUEST } from "../../modules/savebook";
 
 function SavedBook() {
-  const { isLoading } = useSelector((state) => state.savebook);
+  const { isLoading, saveBookResult } = useSelector((state) => state.savebook);
   const dispatch = useDispatch();
   const { Search } = Input;
   const { RangePicker } = DatePicker;
@@ -27,7 +28,8 @@ function SavedBook() {
   const [bookStatusParam, setBookStatusParam] = useState("ALL");
   const [startDt, setStartDt] = useState("1000-01-01 00:00:00");
   const [endDt, setEndDt] = useState("3000-01-01 00:00:00");
-
+  const [searchPageSize, setSearchPageSize] = useState(6);
+  const [searchPageNumber, setSearchPageNumber] = useState(0);
   const handleBookTypeParam = (e) => {
     setBookTypeParam(e);
   };
@@ -37,7 +39,23 @@ function SavedBook() {
   const handleBookSearchParam = (e) => {
     setSearchParam(e.target.value);
   };
+  const handlePaging = (page, pageSize) => {
+    console.log(page, pageSize);
+    setSearchPageNumber(page - 1);
+    setSearchPageSize(pageSize);
 
+    let param = {
+      search: searchParam,
+      bookSearchType: bookTypeParam,
+      bookStatus: bookStatusParam,
+      size: searchPageSize,
+      page: page - 1,
+      startAt: startDt,
+      endAt: endDt,
+    };
+
+    dispatch({ type: SEARCH_SAVED_BOOK_REQUEST, payload: param });
+  };
   const handlePickDate = (date, dateString) => {
     console.log("d ", dateString);
 
@@ -46,18 +64,20 @@ function SavedBook() {
     setStartDt(s + " 00:00:00");
     setEndDt(e + " 00:00:00");
   };
+
   const handleSearchSaveBook = () => {
+    setSearchPageNumber(0);
+    setSearchPageSize(searchPageSize);
     let param = {
       search: searchParam,
       bookSearchType: bookTypeParam,
       bookStatus: bookStatusParam,
-      size: 10,
-      page: 0,
+      size: saveBookResult != null ? saveBookResult.pageable.pageSize : 6,
+      page: searchPageNumber,
       startAt: startDt,
       endAt: endDt,
     };
 
-    console.log("param : ", param);
     dispatch({ type: SEARCH_SAVED_BOOK_REQUEST, payload: param });
   };
   return (
@@ -116,6 +136,22 @@ function SavedBook() {
       </Row>
       <Row>
         <SavedBookResult />
+      </Row>
+
+      <Row style={{ margin: "auto" }}>
+        {saveBookResult != null ? (
+          <Pagination
+            style={{
+              marginLeft: "auto",
+              marginRight: "auto",
+              marginTop: "40px",
+            }}
+            current={searchPageNumber + 1}
+            pageSize={searchPageSize}
+            total={saveBookResult.totalElements}
+            onChange={handlePaging}
+          />
+        ) : null}
       </Row>
     </div>
   );

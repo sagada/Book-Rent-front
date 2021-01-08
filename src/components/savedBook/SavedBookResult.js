@@ -65,7 +65,8 @@ const SavedBookResult = () => {
     >
       <Table
         columns={columns}
-        dataSource={saveBookResult != null ? saveBookResult : null}
+        dataSource={saveBookResult != null ? saveBookResult.content : null}
+        pagination={false}
       />
     </div>
   );

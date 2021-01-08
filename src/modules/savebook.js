@@ -44,7 +44,7 @@ const savebook = handleActions(
     }),
     [SEARCH_SAVED_BOOK_SUCCESS]: (state, action) => ({
       ...state,
-      saveBookResult: action.payload.data.content,
+      saveBookResult: action.payload.data,
       isLoading: false,
     }),
   },
