@@ -8,7 +8,6 @@ import {
   setSaveBookList,
   changeModalState,
   setModalOpen,
-  OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT,
 } from "../../modules/book";
 import KakaoModal from "./KakaoModal";
 import { Input, Row, Col, Select, Button, Divider, Alert, Result } from "antd";
@@ -71,7 +70,6 @@ const Adminsearchbar = () => {
 
     for (let i = 0; i < saveBookList.length; i++) {
       if (saveBookList[i]) {
-        // isbn은 하나만 있다고 가정한다.
         let isbnArr = kakaoBookResult.documents[i].isbn.split(" ");
         let firstIsbn = parseInt(isbnArr[0].trim());
 

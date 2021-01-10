@@ -6,6 +6,7 @@ import {
   Dropdown,
   Space,
   Radio,
+  Button,
   Select,
   DatePicker,
   Image,
@@ -17,41 +18,75 @@ import {
 } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { GET_ORDER_LIST_REQUEST } from "../../modules/order";
+import {
+  GET_ORDER_LIST_REQUEST,
+  MODIFY_ORDER_ID,
+  MODIFY_ORDER_REQUEST,
+  DELETE_ORDER_BOOK_REQUEST,
+} from "../../modules/order";
 const OrderResult = () => {
-  const { orderResult, isLoading, outerOrderResult } = useSelector(
+  const { orderResult, isLoading, modifyOrderId } = useSelector(
     (state) => state.order
   );
   const dispatch = useDispatch();
   const [orderId, setOrderId] = useState();
-  const [orderDate, setOrderDate] = useState();
   const [startDt, setStartDt] = useState();
   const [endDt, setEndDt] = useState();
   const [orderStatus, setOrderStatus] = useState();
   const { Search } = Input;
   const { RangePicker } = DatePicker;
   const { Option, OptGroup } = Select;
-  const [searchPageSize, setSearchPageSize] = useState(3);
+  const [searchPageSize, setSearchPageSize] = useState(6);
   const [searchPageNumber, setSearchPageNumber] = useState(0);
   const [outerData, setOuterData] = useState();
-  const menu = (
-    <Menu>
-      <Menu.Item>Action 1</Menu.Item>
-      <Menu.Item>Action 2</Menu.Item>
-    </Menu>
-  );
-  const handleChangeOrderId = (e) => {
-    setOrderId(e.target.value);
+
+  const handleVisibleChange = (e) => {
+    dispatch({ type: MODIFY_ORDER_ID, payload: e });
   };
-  const orderSearch = () => {
-    const param = {
+  const handleMenuClick = (e) => {
+    const searchParam = {
       orderId: orderId,
-      orderDate: orderDate,
       startDt: startDt,
       endDt: endDt,
       orderStatus: orderStatus,
       size: searchPageSize,
       page: searchPageNumber,
+    };
+
+    let status = "";
+    if (e.key === "1") {
+      status = "CANCEL";
+    } else {
+      status = "COMPLETE";
+    }
+
+    const param = {
+      search: searchParam,
+      orderId: modifyOrderId,
+      status: status,
+    };
+
+    dispatch({ type: MODIFY_ORDER_REQUEST, payload: param });
+  };
+  const menu = (
+    <Menu onClick={handleMenuClick}>
+      <Menu.Item key="1">주문 취소</Menu.Item>
+      <Menu.Item key="2">주문 완료</Menu.Item>
+    </Menu>
+  );
+
+  const handleChangeOrderId = (e) => {
+    setOrderId(e.target.value);
+  };
+
+  const orderSearch = () => {
+    const param = {
+      orderId: orderId,
+      startDt: startDt,
+      endDt: endDt,
+      orderStatus: orderStatus,
+      size: searchPageSize,
+      page: 0,
     };
     dispatch({ type: GET_ORDER_LIST_REQUEST, payload: param });
   };
@@ -67,7 +102,6 @@ const OrderResult = () => {
 
     const param = {
       orderId: orderId,
-      orderDate: orderDate,
       startDt: startDt,
       endDt: endDt,
       orderStatus: orderStatus,
@@ -85,7 +119,24 @@ const OrderResult = () => {
 
     setOrderStatus(a.target.value);
   };
+  const handleDeleteOrderBook = (e) => {
+    console.log(e);
+    const searchParam = {
+      orderId: orderId,
+      startDt: startDt,
+      endDt: endDt,
+      orderStatus: orderStatus,
+      size: searchPageSize,
+      page: searchPageNumber,
+    };
 
+    const param = {
+      search: searchParam,
+      orderBookId: e,
+    };
+
+    dispatch({ type: DELETE_ORDER_BOOK_REQUEST, payload: param });
+  };
   const incolumns = [
     {
       title: "책 이미지",
@@ -97,17 +148,38 @@ const OrderResult = () => {
         </>
       ),
     },
-    { title: "책 ID", dataIndex: "bookId", key: "bookId" },
+    {
+      title: "책 ID",
+      dataIndex: "bookId",
+      key: "bookId",
+      render: (bookId) => {
+        return <Tag color="black">{bookId}</Tag>;
+      },
+    },
+    {
+      title: "주문 책 ID",
+      dataIndex: "orderBookId",
+      key: "orderBookId",
+      render: (text) => <></>,
+    },
     { title: "책 이름", dataIndex: "bookName", key: "bookName" },
     {
       title: "책 상태",
       key: "bookStatus",
-      render: () => (
-        <span>
-          <Badge status="processing" />
-          입고중
-        </span>
-      ),
+      dataIndex: "bookStatus",
+      render: (status) => {
+        let color = "blue";
+
+        let representStatus = "입고대기";
+        if (status == "COMP") {
+          representStatus = "대여 가능";
+          color = "orange";
+        } else if (status == "CANCEL") {
+          representStatus = "입고취소";
+          color = "green";
+        }
+        return <Tag color={color}>{representStatus}</Tag>;
+      },
     },
     { title: "주문 수량", dataIndex: "quantity", key: "quantity" },
     { title: "ISBN", dataIndex: "isbn", key: "booisbnkName" },
@@ -117,27 +189,94 @@ const OrderResult = () => {
       title: "Action",
       dataIndex: "operation",
       key: "operation",
-      render: () => (
+      render: (text, record) => (
         <Space size="middle">
-          <a>Pause</a>
-          <a>Stop</a>
-          <Dropdown overlay={menu}>
-            <a>
-              More <DownOutlined />
-            </a>
-          </Dropdown>
+          <Button onClick={() => handleDeleteOrderBook(record.orderBookId)}>
+            삭제
+          </Button>
         </Space>
       ),
     },
   ];
 
   const columns = [
-    { title: "주문 ID", dataIndex: "orderId", key: "orderId" },
-    { title: "주문 날짜", dataIndex: "orderAt", key: "orderAt" },
-    { title: "상태", dataIndex: "orderStatus", key: "orderStatus" },
-    { title: "주문 개수", dataIndex: "rangeCount", key: "rangeCount" },
-    { title: "책 개수", dataIndex: "totalCount", key: "totalCount" },
-    { title: "", key: "operation", render: () => <a>Publish</a> },
+    {
+      title: "주문 ID",
+      dataIndex: "orderId",
+      key: "orderId",
+      render: (orderId) => {
+        return <Tag color="black">{orderId}</Tag>;
+      },
+    },
+    {
+      title: "주문 날짜",
+      dataIndex: "orderAt",
+      key: "orderAt",
+      render: (date) => {
+        return <Tag color="blue">{date}</Tag>;
+      },
+    },
+    {
+      title: "주문 상태",
+      dataIndex: "orderStatus",
+      key: "orderStatus",
+      render: (status) => {
+        let color = "red";
+        if (status === "READY") {
+          status = "주문 중";
+          color = "cyan";
+        } else if (status == "COMPLETE") {
+          color = "geekblue";
+          status = "주문 완료";
+        } else if (status == "CANCEL") {
+          status = "주문 취소";
+        }
+        return <Tag color={color}>{status}</Tag>;
+      },
+    },
+    {
+      title: "책 개수",
+      dataIndex: "totalCount",
+      key: "totalCount",
+      render: (ct) => {
+        return <Tag color="blue">{ct}</Tag>;
+      },
+    },
+    {
+      title: "수정",
+      key: "action",
+      render: (text, record) => {
+        if (record.orderStatus != "READY") {
+          return (
+            <Button
+              danger
+              type="primary"
+              disabled={record.orderStatus != "READY"}
+            >
+              완료
+            </Button>
+          );
+        } else {
+          return (
+            <Dropdown
+              overlay={menu}
+              onVisibleChange={() => handleVisibleChange(record.orderId)}
+            >
+              <Button
+                danger
+                type="primary"
+                disabled={record.orderStatus != "READY"}
+              >
+                수정하기
+                <DownOutlined>
+                  <DownOutlined />
+                </DownOutlined>
+              </Button>
+            </Dropdown>
+          );
+        }
+      },
+    },
   ];
 
   useEffect(() => {
@@ -158,14 +297,15 @@ const OrderResult = () => {
             author: ina.orderBookDtoList[j].author,
             publisher: ina.orderBookDtoList[j].publisher,
             imgUrl: ina.orderBookDtoList[j].imgUrl,
+            orderBookId: ina.orderBookDtoList[j].orderBookId,
           });
         }
+
         data.push({
           key: i,
           orderId: orderResult.content[i].orderId,
           orderAt: orderResult.content[i].orderDate,
-          rangeCount: 1,
-          totalCount: 1,
+          totalCount: orderResult.content[i].orderBookDtoList.length,
           orderStatus: orderResult.content[i].orderStatus,
           bookList: iData,
         });
@@ -177,10 +317,9 @@ const OrderResult = () => {
   return (
     <>
       <Row style={{ marginTop: "30px" }}>
-        <Col span={3}></Col>
-        <Col span={1}></Col>
+        <Col span={4}></Col>
         <Col span={1}>
-          <Tag color="geekblue">주문 ID</Tag>
+          <Tag color="blue">주문 ID</Tag>
         </Col>
         <Col span={6}>
           <Search
@@ -193,7 +332,7 @@ const OrderResult = () => {
           />
         </Col>
         <Col span={12} style={{ margin: "auto" }}>
-          <Tag color="geekblue">입고 날짜 검색</Tag>
+          <Tag color="blue">입고 날짜 검색</Tag>
           <Space>
             <RangePicker
               defaultValue={new Date()}
@@ -205,52 +344,54 @@ const OrderResult = () => {
       <Row style={{ marginTop: "30px" }}>
         <Col span={3}></Col>
         <Col span={12}>
-          <Tag color="geekblue">입고 상태</Tag>
+          <Tag color="blue">입고 상태</Tag>
           <Radio.Group
             defaultValue="ALL"
             buttonStyle="solid"
             onChange={handleOrderStatus}
           >
             <Radio.Button value="ALL">전체</Radio.Button>
-            <Radio.Button value="READY">입고중</Radio.Button>
-            <Radio.Button value="COMPLETE">입고완료</Radio.Button>
+            <Radio.Button value="READY">주문 중</Radio.Button>
+            <Radio.Button value="COMPLETE">주문 완료</Radio.Button>
+            <Radio.Button value="CANCEL">주문 취소</Radio.Button>
           </Radio.Group>
         </Col>
       </Row>
-      <Table
-        style={{
-          marginTop: "50px",
-          width: "90%",
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
-        tableLayout={true}
-        bordered={true}
-        className="test"
-        columns={columns}
-        expandable={{
-          expandedRowRender: (outerOrderResult) => (
-            <Table
-              style={{
-                marginLeft: "auto",
-                marginRight: "auto",
-                marginTop: "40px",
-                marginBottom: "40px",
-                height: "100%",
-                width: "98%",
-              }}
-              bordered={true}
-              columns={incolumns}
-              dataSource={outerOrderResult.bookList}
-              pagination={false}
-            />
-          ),
-          rowExpandable: (outerOrderResult) => outerOrderResult != null,
-        }}
-        dataSource={outerData}
-        pagination={false}
-      />
-
+      {orderResult != null ? (
+        <Table
+          style={{
+            marginTop: "50px",
+            width: "90%",
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+          tableLayout={true}
+          bordered={true}
+          className="test"
+          columns={columns}
+          expandable={{
+            expandedRowRender: (outerOrderResult) => (
+              <Table
+                style={{
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  marginTop: "40px",
+                  marginBottom: "40px",
+                  height: "100%",
+                  width: "98%",
+                }}
+                bordered={true}
+                columns={incolumns}
+                dataSource={outerOrderResult.bookList}
+                pagination={false}
+              />
+            ),
+            rowExpandable: (outerOrderResult) => outerOrderResult != null,
+          }}
+          dataSource={outerData}
+          pagination={false}
+        />
+      ) : null}
       <Row
         style={{ marginLeft: "auto", marginRight: "auto", marginTop: "20px" }}
       >

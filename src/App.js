@@ -29,7 +29,7 @@ function App({ history }) {
             </Menu.Item>
 
             <Menu.Item key="/order" onClick={() => history.push("/order")}>
-              입고 주문 검색
+              주문 검색
             </Menu.Item>
           </Menu>
         </Header>
