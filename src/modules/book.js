@@ -1,30 +1,31 @@
-import {createAction, handleActions} from "redux-actions";
-import {call, put, takeLatest} from "redux-saga/effects";
-import {ActionTypes} from "../Utils/ActionTypes";
+import { createAction, handleActions } from "redux-actions";
+import { call, put, takeLatest } from "redux-saga/effects";
+import { ActionTypes } from "../Utils/ActionTypes";
 
 import {
-    searchKakaoBook,
-    getBookCountByIsbnArr,
-    saveKakaoBook,
-} from "../lib/book";
+  searchKakaoBook,
+  getBookCountByIsbnArr,
+  saveKakaoBook,
+} from "../api/book";
 
 export const [
-    SEARCH_KAKAO_REQUEST,
-    SEARCH_KAKAO_SUCCESS,
-    SEARCH_KAKAO_FAILURE,
+  SEARCH_KAKAO_REQUEST,
+  SEARCH_KAKAO_SUCCESS,
+  SEARCH_KAKAO_FAILURE,
 ] = ActionTypes("book/SEARCH_KAKAO_BOOK");
 
 export const [
-    SAVE_KAKAO_REQUEST,
-    SAVE_KAKAO_SUCCESS,
-    SAVE_KAKAO_FAILURE,
+  SAVE_KAKAO_REQUEST,
+  SAVE_KAKAO_SUCCESS,
+  SAVE_KAKAO_FAILURE,
 ] = ActionTypes("book/SAVE_KAKAO_BOOK");
 
 export const [
-    GET_QUANTITY_BOOK_REQUEST,
-    GET_QUANTITY_BOOK_SUCCESS,
-    GET_QUANTITY_BOOK_FAILURE,
+  GET_QUANTITY_BOOK_REQUEST,
+  GET_QUANTITY_BOOK_SUCCESS,
+  GET_QUANTITY_BOOK_FAILURE,
 ] = ActionTypes("book/GET_QUANTITY_BOOK");
+
 export const DELETE_SAVE_BOOK_PARAM_BY_IDX = "DELETE_SAVE_BOOK_PARAM_BY_IDX";
 export const SET_INIT_STATE = "SET_INIT_STATE";
 export const CHANGE_SAVE_BOOK_FLAG = "CHANGE_SAVE_BOOK_FLAG";
@@ -38,25 +39,25 @@ export const SET_SAVE_BOOK_LIST = "SAVE_BOOK_LIST";
 export const MODAL_OPEN = "MODAL_OPEN";
 export const CONCAT_BOOK_ISBN = "CONCAT_BOOK_ISBN";
 export const OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT =
-    "OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT";
+  "OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT";
 // 카카오 책 저장
 export const UPDATE_MODAL_STATE = "UPDATE_MODAL_STATE";
 
 export const setSaveBookList = createAction(
-    SET_SAVE_BOOK_LIST,
-    (param) => param
+  SET_SAVE_BOOK_LIST,
+  (param) => param
 );
 export const chagneFlagListIndex = createAction(
-    CHANGE_FALG_LIST_INDEX,
-    (idx) => idx
+  CHANGE_FALG_LIST_INDEX,
+  (idx) => idx
 );
 export const changeSaveBookFlag = createAction(
-    CHANGE_SAVE_BOOK_FLAG,
-    (flag) => flag
+  CHANGE_SAVE_BOOK_FLAG,
+  (flag) => flag
 );
 export const deleteSaveBookParamByIdx = createAction(
-    DELETE_SAVE_BOOK_PARAM_BY_IDX,
-    (idx) => idx
+  DELETE_SAVE_BOOK_PARAM_BY_IDX,
+  (idx) => idx
 );
 // 상태 초기화
 export const setInitState = createAction(SET_INIT_STATE);
@@ -68,215 +69,215 @@ export const changePage = createAction(CHANGE_PAGE, (page) => page);
 export const changeQuery = createAction(CHANGE_QUERY, (query) => query);
 export const changeTarget = createAction(CHANGE_TARGET, (target) => target);
 export const updateModalState = createAction(
-    UPDATE_MODAL_STATE,
-    (param) => param
+  UPDATE_MODAL_STATE,
+  (param) => param
 );
 export const setModalOpen = createAction(MODAL_OPEN);
 export const offSuccessKakakoSaveAlert = createAction(
-    OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT
+  OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT
 );
 export const searchKakaoBookRequest = createAction(
-    SEARCH_KAKAO_REQUEST,
-    (param) => param
+  SEARCH_KAKAO_REQUEST,
+  (param) => param
 );
 
 function* saveKakaoBookSaga(action) {
-    console.log("saveKakaoBook action", action);
+  console.log("saveKakaoBook action", action);
 
-    try {
-        const response = yield call(saveKakaoBook, action.payload);
-        yield put({
-            type: SAVE_KAKAO_SUCCESS,
-            payload: response,
-        });
-    } catch (error) {
-        alert(error.data.message + "\n[" + error.data.content + "]");
-        yield put({
-            type: SAVE_KAKAO_FAILURE,
-            payload: error,
-        });
-    }
+  try {
+    const response = yield call(saveKakaoBook, action.payload);
+    yield put({
+      type: SAVE_KAKAO_SUCCESS,
+      payload: response,
+    });
+  } catch (error) {
+    alert(error.data.message + "\n[" + error.data.content + "]");
+    yield put({
+      type: SAVE_KAKAO_FAILURE,
+      payload: error,
+    });
+  }
 }
 
 function* getKakaoBookSaga(action) {
-    console.log("getKakaoBook action", action);
-    try {
-        const response = yield call(searchKakaoBook, action.payload);
-        yield put({
-            type: SEARCH_KAKAO_SUCCESS,
-            payload: response,
-        });
-    } catch (e) {
-        yield put({
-            type: SEARCH_KAKAO_FAILURE,
-            payload: e,
-            error: true,
-        });
-    }
+  console.log("getKakaoBook action", action);
+  try {
+    const response = yield call(searchKakaoBook, action.payload);
+    yield put({
+      type: SEARCH_KAKAO_SUCCESS,
+      payload: response,
+    });
+  } catch (e) {
+    yield put({
+      type: SEARCH_KAKAO_FAILURE,
+      payload: e,
+      error: true,
+    });
+  }
 }
 
 function* getBookCountSaga(action) {
-    console.log("action", action);
-    try {
-        const response = yield call(getBookCountByIsbnArr, action.payload);
-        console.log("response :", response);
-        yield put({
-            type: GET_QUANTITY_BOOK_SUCCESS,
-            payload: response,
-        });
-    } catch (e) {
-        yield put({
-            type: GET_QUANTITY_BOOK_FAILURE,
-            payload: e,
-            error: true,
-        });
-    }
+  console.log("action", action);
+  try {
+    const response = yield call(getBookCountByIsbnArr, action.payload);
+    console.log("response :", response);
+    yield put({
+      type: GET_QUANTITY_BOOK_SUCCESS,
+      payload: response,
+    });
+  } catch (e) {
+    yield put({
+      type: GET_QUANTITY_BOOK_FAILURE,
+      payload: e,
+      error: true,
+    });
+  }
 }
 
 export function* bookSaga() {
-    yield takeLatest(SEARCH_KAKAO_REQUEST, getKakaoBookSaga);
-    yield takeLatest(SAVE_KAKAO_REQUEST, saveKakaoBookSaga);
-    yield takeLatest(GET_QUANTITY_BOOK_REQUEST, getBookCountSaga);
+  yield takeLatest(SEARCH_KAKAO_REQUEST, getKakaoBookSaga);
+  yield takeLatest(SAVE_KAKAO_REQUEST, saveKakaoBookSaga);
+  yield takeLatest(GET_QUANTITY_BOOK_REQUEST, getBookCountSaga);
 }
 
 const initialState = {
-    page: 1,
-    size: 8,
-    query: "",
-    target: "title",
-    isLoading: false,
-    kakaoBookResult: null,
-    saveBookFlag: false,
-    saveBookList: [],
-    isBookModalOpen: false,
-    saveBookListParam: [],
-    modalOpen: false,
-    saveBookIsSuccess: false,
-    modalState: null,
-    errorParam: null,
+  page: 1,
+  size: 8,
+  query: "",
+  target: "title",
+  isLoading: false,
+  kakaoBookResult: null,
+  saveBookFlag: false,
+  saveBookList: [],
+  isBookModalOpen: false,
+  saveBookListParam: [],
+  modalOpen: false,
+  saveBookIsSuccess: false,
+  modalState: null,
+  errorParam: null,
 };
 
 const book = handleActions(
-    {
-        [DELETE_SAVE_BOOK_PARAM_BY_IDX]: (state, action) => ({
-            ...state,
-            saveBookListParam: action.payload,
-        }),
-        [SET_INIT_STATE]: (state, action) => ({
-            page: 1,
-            size: 8,
-            query: "",
-            target: "title",
-            isLoading: false,
-            kakaoBookResult: null,
-            saveBookFlag: false,
-            saveBookList: [],
-            isBookModalOpen: false,
-            saveBookListParam: [],
-            modalOpen: false,
-            saveBookIsSuccess: false,
-            modalState: null,
-        }),
+  {
+    [DELETE_SAVE_BOOK_PARAM_BY_IDX]: (state, action) => ({
+      ...state,
+      saveBookListParam: action.payload,
+    }),
+    [SET_INIT_STATE]: (state, action) => ({
+      page: 1,
+      size: 8,
+      query: "",
+      target: "title",
+      isLoading: false,
+      kakaoBookResult: null,
+      saveBookFlag: false,
+      saveBookList: [],
+      isBookModalOpen: false,
+      saveBookListParam: [],
+      modalOpen: false,
+      saveBookIsSuccess: false,
+      modalState: null,
+    }),
 
-        [CHANGE_QUANTITY_BY_INDEX]: (state, action) => ({
-            ...state,
-        }),
-        [UPDATE_MODAL_STATE]: (state, action) => ({
-            ...state,
-            modalState: action.payload,
-        }),
-        [OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT]: (state, action) => ({
-            ...state,
-            saveBookIsSuccess: false,
-        }),
-        [SAVE_KAKAO_REQUEST]: (state, action) => ({
-            ...state,
-            saveBookIsSuccess: false,
-        }),
-        [SAVE_KAKAO_SUCCESS]: (state, action) => ({
-            ...state,
-            isBookModalOpen: false,
-            saveBookIsSuccess: true,
-            page: 1,
-            size: 8,
-            query: "",
-            target: "title",
-            isLoading: false,
-            kakaoBookResult: null,
-            saveBookFlag: false,
-            saveBookList: [],
-            saveBookListParam: [],
-            modalOpen: false,
-            concatIsbnParam: null,
-            modalState: null,
-        }),
-        [SAVE_KAKAO_FAILURE]: (state, action) => ({
-            ...state,
+    [CHANGE_QUANTITY_BY_INDEX]: (state, action) => ({
+      ...state,
+    }),
+    [UPDATE_MODAL_STATE]: (state, action) => ({
+      ...state,
+      modalState: action.payload,
+    }),
+    [OFF_SAVE_KAKAO_BOOK_SUCCESS_ALERT]: (state, action) => ({
+      ...state,
+      saveBookIsSuccess: false,
+    }),
+    [SAVE_KAKAO_REQUEST]: (state, action) => ({
+      ...state,
+      saveBookIsSuccess: false,
+    }),
+    [SAVE_KAKAO_SUCCESS]: (state, action) => ({
+      ...state,
+      isBookModalOpen: false,
+      saveBookIsSuccess: true,
+      page: 1,
+      size: 8,
+      query: "",
+      target: "title",
+      isLoading: false,
+      kakaoBookResult: null,
+      saveBookFlag: false,
+      saveBookList: [],
+      saveBookListParam: [],
+      modalOpen: false,
+      concatIsbnParam: null,
+      modalState: null,
+    }),
+    [SAVE_KAKAO_FAILURE]: (state, action) => ({
+      ...state,
 
-            errorParam: action.payload,
-        }),
-        [CONCAT_BOOK_ISBN]: (state, action) => ({
-            ...state,
-            concatIsbnParam: action.payload,
-        }),
-        [CHANGE_MODAL_STATE]: (state, action) => ({
-            ...state,
-            isBookModalOpen: action.payload,
-        }),
-        [CHANGE_FALG_LIST_INDEX]: (state, action) => ({
-            ...state,
-            saveBookList: [
-                ...state.saveBookList.slice(0, action.payload),
-                !state.saveBookList[action.payload],
-                ...state.saveBookList.slice(action.payload + 1),
-            ],
-        }),
-        [MODAL_OPEN]: (state, action) => ({
-            ...state,
-            modalOpen: !state.modalOpen,
-        }),
-        [CHANGE_SAVE_BOOK_FLAG]: (state, action) => ({
-            ...state,
-            saveBookFlag: action.payload,
-            saveBookList: Array.from({length: state.size}, (i) => false),
-        }),
-        [CHANGE_PAGE]: (state, action) => ({
-            ...state,
-            page: action.payload,
-        }),
-        [CHANGE_TARGET]: (state, action) => ({
-            ...state,
-            target: action.payload,
-        }),
-        [CHANGE_QUERY]: (state, action) => ({
-            ...state,
-            query: action.payload,
-        }),
-        [SEARCH_KAKAO_REQUEST]: (state, action) => ({
-            ...state,
-            isLoading: true,
-            saveBookFlag: false,
-            saveBookList: [],
-            isBookModalOpen: false,
-            saveBookListParam: [],
-            kakaoBookResult: null,
-            modalOpen: false,
-            saveBookIsSuccess: false,
-        }),
+      errorParam: action.payload,
+    }),
+    [CONCAT_BOOK_ISBN]: (state, action) => ({
+      ...state,
+      concatIsbnParam: action.payload,
+    }),
+    [CHANGE_MODAL_STATE]: (state, action) => ({
+      ...state,
+      isBookModalOpen: action.payload,
+    }),
+    [CHANGE_FALG_LIST_INDEX]: (state, action) => ({
+      ...state,
+      saveBookList: [
+        ...state.saveBookList.slice(0, action.payload),
+        !state.saveBookList[action.payload],
+        ...state.saveBookList.slice(action.payload + 1),
+      ],
+    }),
+    [MODAL_OPEN]: (state, action) => ({
+      ...state,
+      modalOpen: !state.modalOpen,
+    }),
+    [CHANGE_SAVE_BOOK_FLAG]: (state, action) => ({
+      ...state,
+      saveBookFlag: action.payload,
+      saveBookList: Array.from({ length: state.size }, (i) => false),
+    }),
+    [CHANGE_PAGE]: (state, action) => ({
+      ...state,
+      page: action.payload,
+    }),
+    [CHANGE_TARGET]: (state, action) => ({
+      ...state,
+      target: action.payload,
+    }),
+    [CHANGE_QUERY]: (state, action) => ({
+      ...state,
+      query: action.payload,
+    }),
+    [SEARCH_KAKAO_REQUEST]: (state, action) => ({
+      ...state,
+      isLoading: true,
+      saveBookFlag: false,
+      saveBookList: [],
+      isBookModalOpen: false,
+      saveBookListParam: [],
+      kakaoBookResult: null,
+      modalOpen: false,
+      saveBookIsSuccess: false,
+    }),
 
-        [SEARCH_KAKAO_SUCCESS]: (state, action) => ({
-            ...state,
-            kakaoBookResult: action.payload.data,
-            saveBookList: Array.from({length: state.size}, (undefined, i) => false),
-            isLoading: false,
-            saveBookFlag: false,
-        }),
-        [SET_SAVE_BOOK_LIST]: (state, action) => ({
-            ...state,
-            saveBookListParam: action.payload,
-        }),
-    },
-    initialState
+    [SEARCH_KAKAO_SUCCESS]: (state, action) => ({
+      ...state,
+      kakaoBookResult: action.payload.data,
+      saveBookList: Array.from({ length: state.size }, (undefined, i) => false),
+      isLoading: false,
+      saveBookFlag: false,
+    }),
+    [SET_SAVE_BOOK_LIST]: (state, action) => ({
+      ...state,
+      saveBookListParam: action.payload,
+    }),
+  },
+  initialState
 );
 
 export default book;

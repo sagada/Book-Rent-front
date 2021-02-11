@@ -2,6 +2,6 @@ import React from "react";
 import OrderResult from "../components/order/OrderResult";
 
 const OrderPage = () => {
-    return <OrderResult/>;
+  return <OrderResult />;
 };
 export default OrderPage;
