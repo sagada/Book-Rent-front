@@ -13,7 +13,7 @@ import "antd/dist/antd.css";
 const { Header, Footer, Content } = Layout;
 
 function App({ history }) {
-  const locations = useLocation();
+  const location = useLocation();
   return (
     <>
       <Layout style={{ height: "2000px" }}>
@@ -22,7 +22,7 @@ function App({ history }) {
           <Menu
             theme="dark"
             mode="horizontal"
-            defaultSelectedKeys={[locations.pathname]}
+            defaultSelectedKeys={[location.pathname]}
           >
             <Menu.Item key="/" onClick={() => history.push("/")}>
               입고하기

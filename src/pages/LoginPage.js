@@ -1,10 +1,10 @@
 import React from "react";
 import "antd/dist/antd.css";
 
-import Login from "../components/auth/Login";
+import LoginForm from "../components/auth/LoginForm";
 
 const LoginPage = () => {
-  return <Login />;
+  return <LoginForm type="login" />;
 };
 
 export default LoginPage;
