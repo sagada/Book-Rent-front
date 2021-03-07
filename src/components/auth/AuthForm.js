@@ -44,7 +44,7 @@ const AuthForm = ({ type, form, onChange, onSubmit }) => {
             name="password"
             rules={[{ required: true, message: "비밀번호를 입력해주세요!" }]}
           >
-            <Input value={form.password} name="password" />
+            <Input.Password value={form.password} name="password" />
           </Form.Item>
 
           <Form.Item
@@ -57,7 +57,7 @@ const AuthForm = ({ type, form, onChange, onSubmit }) => {
               },
             ]}
           >
-            <Input value={form.passwordConfirm} name="passwordConfirm" />
+            <Input.Password value={form.passwordConfirm} name="passwordConfirm" />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" onClick={onSubmit}>
@@ -68,7 +68,7 @@ const AuthForm = ({ type, form, onChange, onSubmit }) => {
       )}
 
       {type == "login" && (
-        <Form>
+        <Form onChange={onChange} style={{ width: "80%", margin: "auto" }}>
           <Form.Item
             label="Email"
             name="email"
@@ -82,11 +82,11 @@ const AuthForm = ({ type, form, onChange, onSubmit }) => {
             name="password"
             rules={[{ required: true, message: "Please input your username!" }]}
           >
-            <Input name="password" value={form.password} />
+            <Input.Password name="password" value={form.password} />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit"  onClick={onSubmit}>
               로그인
             </Button>
           </Form.Item>

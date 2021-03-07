@@ -1,7 +1,7 @@
-import React from "react";
+import React,{useEffect} from "react";
 
-import { Route, withRouter, useLocation } from "react-router-dom";
-
+import { Route, withRouter, useLocation} from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { Layout, Menu } from "antd";
 import AdminPage from "./pages/AdminPage";
 import BookPage from "./pages/BookPage";
@@ -9,11 +9,21 @@ import OrderPage from "./pages/OrderPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import "antd/dist/antd.css";
+import { check } from "./modules/user";
+
 
 const { Header, Footer, Content } = Layout;
 
 function App({ history }) {
   const location = useLocation();
+  const dispatch = useDispatch();
+ const { user} = useSelector(({ user }) => ({
+    user : user.user
+  }));
+  useEffect(() => {
+    dispatch(check());
+  }, [])
+   ;
   return (
     <>
       <Layout style={{ height: "2000px" }}>
@@ -35,13 +45,16 @@ function App({ history }) {
               주문 검색
             </Menu.Item>
 
-            <Menu.Item key="/login" onClick={() => history.push("/login")}>
-              로그인
-            </Menu.Item>
 
+            <Menu.Item key="/login" onClick={() => history.push("/login")}>
+              {user == null ? '로그인' : '로그아웃'}
+            </Menu.Item>
+            {user == null ? 
             <Menu.Item key="/signup" onClick={() => history.push("/signup")}>
               회원가입
             </Menu.Item>
+            :null
+}
           </Menu>
         </Header>
 

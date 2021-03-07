@@ -21,6 +21,7 @@ const RegisterForm = ({ history }) => {
     e.preventDefault();
     const { email, password, nickname, passwordConfirm } = form;
     if (password !== passwordConfirm) {
+      alert("비밀번호를 확인해주세요.")
       return;
     }
 
@@ -37,8 +38,6 @@ const RegisterForm = ({ history }) => {
   }, [history, user]);
   useEffect(() => {
     if (authError) {
-      console.log("오류 발생");
-      alert(authError);
       console.log(authError);
       return;
     }

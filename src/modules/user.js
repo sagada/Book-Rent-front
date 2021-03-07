@@ -2,7 +2,6 @@ import { handleActions, createAction } from "redux-actions";
 import { call, put, takeLatest } from "redux-saga/effects";
 import { ActionTypes } from "../Utils/ActionTypes";
 
-import * as authAPI from "../api/auth";
 import { checkApi } from "../api/user";
 
 const TEMP_SET_USER = "user/TEMP_SET_USER"; // 새로고침 이후 임시 로그인 처리
@@ -20,7 +19,7 @@ function* userRequestSaga(action) {
     const response = yield call(checkApi, action.payload);
     yield put({
       type: CHECK_SUCCESS,
-      payload: response,
+      payload: response.data,
     });
   } catch (error) {
     yield put({
