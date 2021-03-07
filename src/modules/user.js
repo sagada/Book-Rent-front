@@ -13,7 +13,14 @@ export const [CHECK_REQUEST, CHECK_SUCCESS, CHECK_FAILURE] = ActionTypes(
 
 export const tempSetUser = createAction(TEMP_SET_USER, (user) => user);
 export const check = createAction(CHECK_REQUEST);
-
+function checkFailSaga() {
+  try {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  } catch (e) {
+    console.log("checkFailSaga remove localStorage");
+  }
+}
 function* userRequestSaga(action) {
   try {
     const response = yield call(checkApi, action.payload);
@@ -31,6 +38,7 @@ function* userRequestSaga(action) {
 
 export function* userSaga() {
   yield takeLatest(CHECK_REQUEST, userRequestSaga);
+  yield takeLatest(CHECK_FAILURE, checkFailSaga);
 }
 const initialState = {
   user: null,

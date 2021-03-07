@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeField, initializeForm, register } from "../../modules/auth";
 import AuthForm from "./AuthForm";
 import { withRouter } from "react-router-dom";
 const RegisterForm = ({ history }) => {
   const dispatch = useDispatch();
+  const [error, setError] = useState(null);
   const { form, auth, authError, user } = useSelector(({ auth, user }) => ({
     form: auth.register,
     auth: auth.auth,
@@ -21,7 +22,18 @@ const RegisterForm = ({ history }) => {
     e.preventDefault();
     const { email, password, nickname, passwordConfirm } = form;
     if (password !== passwordConfirm) {
-      alert("비밀번호를 확인해주세요.")
+      console.log("password !== passwordConfirm");
+      setError("비밀번호를 확인해주세요.");
+      dispatch(changeField({ form: "register", key: "password", value: "" }));
+      dispatch(
+        changeField({ form: "register", key: "passwordConfirm", value: "" })
+      );
+
+      return;
+    }
+
+    if ([email, password, nickname, passwordConfirm].includes("")) {
+      setError("빈 칸을 모두 입력해주세요.");
       return;
     }
 
@@ -31,6 +43,14 @@ const RegisterForm = ({ history }) => {
   useEffect(() => {
     dispatch(initializeForm("register"));
   }, [dispatch]);
+
+  useEffect(() => {
+    if (authError) {
+      setError(authError.data.content);
+      return;
+    }
+  }, [authError, dispatch]);
+
   useEffect(() => {
     if (user) {
       history.push("/");
@@ -38,13 +58,11 @@ const RegisterForm = ({ history }) => {
   }, [history, user]);
   useEffect(() => {
     if (authError) {
-      console.log(authError);
       return;
     }
 
     if (auth) {
       alert("회원가입 성공!");
-      console.log(auth);
       window.location.replace("/");
     }
   }, [auth, authError]);
@@ -54,6 +72,7 @@ const RegisterForm = ({ history }) => {
       form={form}
       onChange={onChange}
       onSubmit={onSubmit}
+      error={error}
     />
   );
 };

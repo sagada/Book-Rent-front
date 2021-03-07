@@ -1,18 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { check } from "../../modules/user";
 import { initializeForm, changeField, login } from "../../modules/auth";
 import AuthForm from "./AuthForm";
 
-const LoginForm = ({history}) => {
+const LoginForm = ({ history }) => {
   const dispatch = useDispatch();
-
-  const { form ,auth, authError, user} = useSelector(({ auth, user }) => ({
+  const [error, setError] = useState(null);
+  const { form, auth, authError, user } = useSelector(({ auth, user }) => ({
     form: auth.login,
-    auth : auth.auth,
-    authError : auth.authError,
-    user : user.user
+    auth: auth.auth,
+    authError: auth.authError,
+    user: user.user,
   }));
 
   const onChange = (e) => {
@@ -28,7 +28,7 @@ const LoginForm = ({history}) => {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    const {email, password} = form;
+    const { email, password } = form;
     dispatch(login({ email, password }));
   };
 
@@ -37,38 +37,32 @@ const LoginForm = ({history}) => {
     dispatch(initializeForm("login"));
   }, [dispatch]);
 
-  useEffect(()=>{
-    if (authError)
-    {
-      console.log('오류 발생')
-      console.log(authError)
-      return ;
+  useEffect(() => {
+    if (authError) {
+      setError(authError.data.content);
+      return;
     }
 
-    if (auth)
-    {
-      dispatch(check())
-
-      console.log(
-        'auth 출력', auth
-      )
-      // window.localStorage.setItem('token', auth.token)
+    if (auth) {
+      dispatch(check());
     }
+  }, [auth, authError, dispatch]);
 
-  }, [auth, authError, dispatch])
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("user", JSON.stringify(user));
+      window.location.replace("/");
 
-  
-  useEffect(()=>{
-    if (user){
-      window.location.replace('/')
+      return;
     }
-  },[user, history])
+  }, [user, history]);
   return (
     <AuthForm
       type="login"
       form={form}
       onChange={onChange}
       onSubmit={onSubmit}
+      error={error}
     />
   );
 };

@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
+import styled from "styled-components";
 import { Form, Input, Select, Tooltip, Button } from "antd";
 const textMap = {
   login: "로그인",
   register: "회원가입",
 };
-
-const AuthForm = ({ type, form, onChange, onSubmit }) => {
+const ErrorMessage = styled.div`
+  color: red;
+  text-align: center;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+`;
+const AuthForm = ({ type, form, onChange, onSubmit, error }) => {
   const text = textMap[type];
-
   return (
     <>
       <h3
@@ -57,7 +62,10 @@ const AuthForm = ({ type, form, onChange, onSubmit }) => {
               },
             ]}
           >
-            <Input.Password value={form.passwordConfirm} name="passwordConfirm" />
+            <Input.Password
+              value={form.passwordConfirm}
+              name="passwordConfirm"
+            />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" onClick={onSubmit}>
@@ -86,12 +94,14 @@ const AuthForm = ({ type, form, onChange, onSubmit }) => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit"  onClick={onSubmit}>
+            <Button type="primary" htmlType="submit" onClick={onSubmit}>
               로그인
             </Button>
           </Form.Item>
         </Form>
       )}
+
+      {error && <ErrorMessage>{error}</ErrorMessage>}
     </>
   );
 };

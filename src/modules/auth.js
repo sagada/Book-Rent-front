@@ -19,7 +19,6 @@ export const [
   REGISTER_FAILURE,
 ] = ActionTypes("auth/REGISTER");
 
-const SET_LOCAL_STORAGE = "auth/SET_LOCAL_STORAGE";
 export const [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE] = ActionTypes(
   "auth/LOGIN"
 );
@@ -43,7 +42,6 @@ export const register = createAction(
 function* loginSaga(action) {
   try {
     const response = yield call(loginApi, action.payload);
-    console.log('loginSaga : ', response)
     yield put({
       type: LOGIN_SUCCESS,
       payload: response.data,
@@ -62,10 +60,9 @@ function* registerSaga(action) {
     console.log("registerSaga", response);
     yield put({
       type: REGISTER_SUCCESS,
-      payload: response.data,
+      payload: response,
     });
   } catch (error) {
-    alert(error.data.message);
     yield put({
       type: REGISTER_FAILURE,
       payload: error,
@@ -108,7 +105,7 @@ const auth = handleActions(
     [LOGIN_SUCCESS]: (state, action) => ({
       ...state,
       authError: null,
-      auth : action.payload,
+      auth: action.payload,
     }),
     [LOGIN_FAILURE]: (state, { payload: error }) => ({
       ...state,
