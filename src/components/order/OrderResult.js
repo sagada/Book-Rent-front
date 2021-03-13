@@ -26,10 +26,15 @@ import {
 } from "../../modules/order";
 
 const OrderResult = () => {
+  const dispatch = useDispatch();
+  const [error, setError] = useState(null);
+  const { user } = useSelector((user) => ({
+    user: user.user,
+  }));
+
   const { orderResult, isLoading, modifyOrderId } = useSelector(
     (state) => state.order
   );
-  const dispatch = useDispatch();
   const [orderId, setOrderId] = useState();
   const [startDt, setStartDt] = useState();
   const [endDt, setEndDt] = useState();
@@ -191,12 +196,17 @@ const OrderResult = () => {
     { title: "저자", dataIndex: "author", key: "author" },
     { title: "출판사", dataIndex: "publisher", key: "publisher" },
     {
-      title: "Action",
+      title: "삭제",
       dataIndex: "operation",
       key: "operation",
       render: (text, record) => (
         <Space size="middle">
-          <Button onClick={() => handleDeleteOrderBook(record.orderBookId)}>
+          <Button
+            disabled={
+              record.bookStatus === "COMP" || user.user.role !== "ROLE_ADMIN"
+            }
+            onClick={() => handleDeleteOrderBook(record.orderBookId)}
+          >
             삭제
           </Button>
         </Space>
@@ -258,7 +268,7 @@ const OrderResult = () => {
     },
 
     {
-      title: "수정",
+      title: "입고 상황",
       key: "action",
       render: (text, record) => {
         if (record.orderStatus != "READY") {
@@ -272,6 +282,9 @@ const OrderResult = () => {
             </Button>
           );
         } else {
+          if (user.user.role !== "ROLE_ADMIN") {
+            return <Tag color="gold">입고 권한 없음</Tag>;
+          }
           return (
             <Dropdown
               overlay={menu}
