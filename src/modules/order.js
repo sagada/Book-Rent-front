@@ -61,6 +61,7 @@ function* modifyOrderSaga(action) {
       payload: action.payload.search,
     });
   } catch (e) {
+    alert(e.data.message);
     yield put({
       type: MODIFY_ORDER_FAILURE,
       payload: e,

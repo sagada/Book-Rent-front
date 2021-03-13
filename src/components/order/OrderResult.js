@@ -45,6 +45,10 @@ const OrderResult = () => {
     dispatch({ type: MODIFY_ORDER_ID, payload: e });
   };
   const handleMenuClick = (e) => {
+    if (!window.confirm("상태를 변경하시겠습니까?")) {
+      alert("취소하였습니다.");
+      return;
+    }
     const searchParam = {
       orderId: orderId,
       startDt: startDt,
