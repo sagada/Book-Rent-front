@@ -243,6 +243,16 @@ const OrderResult = () => {
         return <Tag color="blue">{ct}</Tag>;
       },
     },
+
+    {
+      title: "주문 Email",
+      dataIndex: "regNm",
+      key: "regnm",
+      render: (ct) => {
+        return <Tag color="blue">{ct}</Tag>;
+      },
+    },
+
     {
       title: "수정",
       key: "action",
@@ -305,6 +315,7 @@ const OrderResult = () => {
         data.push({
           key: i,
           orderId: orderResult.content[i].orderId,
+          regNm: orderResult.content[i].memberNm,
           orderAt: orderResult.content[i].orderDate,
           totalCount: orderResult.content[i].orderBookDtoList.length,
           orderStatus: orderResult.content[i].orderStatus,
