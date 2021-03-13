@@ -92,6 +92,7 @@ function* saveKakaoBookSaga(action) {
     });
   } catch (error) {
     alert(error.data.message + "\n[" + error.data.content + "]");
+    
     yield put({
       type: SAVE_KAKAO_FAILURE,
       payload: error,
