@@ -1,5 +1,10 @@
 주제 :도서관 어드민 개인 토이 프로젝트
 
+JPA
+Mysql
+Spring Security
+Token 
+
 ## React
 
 - 백엔드 프로젝트와 별도로 저장소 생성하여 진행 
